@@ -18,7 +18,7 @@ class CanvasHandler{
         }
 
         for(let i = 0; i < this.BRIDGE_POINTS-1; i++){
-            this.objects.push(new DistantJoint(this.objects[i], this.objects[i+1], this.WIDTH/(this.BRIDGE_POINTS+80)));
+            this.objects.push(new DistantJoint(NaN, NaN, false, this.objects[i], this.objects[i+1], this.WIDTH/(this.BRIDGE_POINTS+80)));
         }
 
         this.objects.push(new Circle(500, 50, true, 12, this.MASS_CONSTANT));

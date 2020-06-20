@@ -1,5 +1,6 @@
-class DistantJoint{
-    constructor(obj1, obj2, e){
+class DistantJoint extends Object{
+    constructor(x, y, is_movable, obj1, obj2, e){
+        super(x, y, is_movable)
         this.obj1 = obj1;
         this.obj2 = obj2;
         this.equilibrium = e-20; // the joint will not exert force if the objects are at this distance from eachother
@@ -41,13 +42,7 @@ class DistantJoint{
     }
 
     calculateAcceleration() {
-        return;
-    }
-    move() {
-        return;
-    }
-    resetForces() {
-        return;
+        return 0;
     }
 
     calculateCollision(vx, vy) {
