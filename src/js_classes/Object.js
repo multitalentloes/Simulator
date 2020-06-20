@@ -11,7 +11,7 @@ class Object{
         this.force = {
             "x" : 0,
             "y" : 0
-        }
+        }   
         this.acceleration = {
             "x" : 0,
             "y" : 0
@@ -30,8 +30,10 @@ class Object{
             this.pos.x += this.v.x;
             this.pos.y += this.v.y;
 
-            this.v.x *= 0.98;
-            this.v.y *= 0.98;
+            if (this.DAMPING){
+                this.v.x *= this.DAMPING;
+                this.v.y *= this.DAMPING;
+            }
         }
     }
 

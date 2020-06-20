@@ -6,6 +6,18 @@ class DistantJoint{
         this.ex = e/2;
         this.ey = e/2;
         this.EQUILIBRIUM_CONSTANT = 12; 
+        this.TYPE = "DISTANT_JOINT";
+        this.pos = {
+            "x" : (obj1.pos.x+obj2.pos.x)/2,
+            "y" : (obj1.pos.y+obj2.pos.y)/2
+        }
+        this.v = {
+            "x" : (obj1.v.x+obj2.v.x)/2,
+            "y" : (obj1.v.y+obj2.v.y)/2
+        }
+        this.mass = (obj1.mass + obj2.mass)/2;
+
+
 
         this.calculateForces = this.calculateForces.bind(this);
     }
@@ -26,6 +38,23 @@ class DistantJoint{
         this.obj1.force.y += force.y;
         this.obj2.force.x -= force.x;
         this.obj2.force.y -= force.y;
+    }
+
+    calculateAcceleration() {
+        return;
+    }
+    move() {
+        return;
+    }
+    resetForces() {
+        return;
+    }
+
+    calculateCollision(vx, vy) {
+        this.obj1.v.x = vx/2;
+        this.obj1.v.y = vy/2;
+        this.obj2.v.x = vx/2;
+        this.obj2.v.y = vy/2;
     }
 
 
