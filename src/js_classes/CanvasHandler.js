@@ -26,14 +26,14 @@ class CanvasHandler{
         this.drawAll = this.drawAll.bind(this);
     }
 
-    update(dt){
+    update(){
         this.c.clearRect(0, 0, this.WIDTH, this.HEIGHT);
 
         this.calculateAllForces();
         
         for(let obj of this.objects){
             obj.calculateAcceleration();
-            obj.move(dt);
+            obj.move();
             obj.resetForces();
         }
         this.drawAll();

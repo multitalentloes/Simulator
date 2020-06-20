@@ -22,7 +22,7 @@ class Object{
         this.resetForces = this.resetForces.bind(this);
     }
 
-    move(dt){
+    move(){
         if (this.is_movable){
             this.v.x += this.acceleration.x;
             this.v.y += this.acceleration.y;
