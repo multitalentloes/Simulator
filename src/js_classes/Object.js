@@ -4,7 +4,7 @@ class Object{
             "x" : x,
             "y" : y
         }
-        this.delta = {
+        this.v = {
             "x" : 0,
             "y" : 0
         }
@@ -17,20 +17,21 @@ class Object{
             "y" : 0
         }
         this.is_movable = is_movable;
-        this.energy_loss = 1.00;
 
         this.move = this.move.bind(this);
         this.resetForces = this.resetForces.bind(this);
     }
 
-    move(){
-        //this.energy_loss *= 0.999;
+    move(dt){
         if (this.is_movable){
-            this.delta.x += this.energy_loss*this.acceleration.x;
-            this.delta.y += this.energy_loss*this.acceleration.y;
+            this.v.x += this.acceleration.x;
+            this.v.y += this.acceleration.y;
             
-            this.pos.x += this.energy_loss*this.delta.x;
-            this.pos.y += this.energy_loss*this.delta.y;
+            this.pos.x += this.v.x;
+            this.pos.y += this.v.y;
+
+            this.v.x *= 0.98;
+            this.v.y *= 0.98;
         }
     }
 
