@@ -1,0 +1,13 @@
+canvas{
+    width: 80%;
+    height: 70%;
+    margin: auto;
+    display: block;
+}
+
+body{
+    margin: 0;
+    overflow: hidden; 
+    border-width: 0;
+    display:inline-block;
+}
