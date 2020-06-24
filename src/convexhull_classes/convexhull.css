@@ -1,13 +1,24 @@
-canvas{
-    width: 80%;
-    height: 70%;
-    margin: auto;
+#canvas{
+    width: 64rem;
+    height: 36rem;
+    margin: 0 auto;
     display: block;
+    border: 2px gray solid;
+    border-radius: 10px;
 }
 
-body{
-    margin: 0;
-    overflow: hidden; 
-    border-width: 0;
-    display:inline-block;
+#buttonContainer{
+    display: block;
+    margin: auto;
+    width: 12%;
+}
+
+#newButton {
+    margin: 2rem auto;
+    display: inline-block;
+}
+
+#restartButton{
+    margin: 2rem auto;
+    display: inline-block;
 }
