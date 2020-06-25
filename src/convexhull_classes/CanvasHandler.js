@@ -8,14 +8,15 @@ class CanvasHandler{
         
         this.points_set = new SetOfPoints(this.generatePoints(this.NUM_OF_POINTS));
         this.nextFrame = this.points_set.grahamScan();
+        this.is_paused = false;
 
         this.line = new Line(this.points_set.points[0], this.points_set.points[1], "#000000");
         this.update = this.update.bind(this);
         this.generatePoints = this.generatePoints.bind(this);
     }
 
-    update(){
-        if (!this.nextFrame.next().done){
+    update(force_render){
+        if ((!this.nextFrame.next().done && !this.is_paused) || force_render){
             this.c.clearRect(0, 0, this.WIDTH, this.HEIGHT);
             this.points_set.draw(this.c);
         }

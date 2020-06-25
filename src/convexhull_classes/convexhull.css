@@ -7,18 +7,40 @@
     border-radius: 10px;
 }
 
-#buttonContainer{
+#menu{
     display: block;
-    margin: auto;
-    width: 12%;
+    margin: 2rem auto;
+    width: 30%;
 }
 
-#newButton {
-    margin: 2rem auto;
+#buttonContainer1{
     display: inline-block;
+    width: 32%;
+}
+
+#buttonContainer2{
+    display: inline-block;
+    width: 32%;
+    border-right: 1px solid gray;
+    border-left: 1px solid gray;
+}
+
+#buttonContainer3{
+    display: inline-block;
+    width: 32%;
+}
+
+#pauseButton{
+    display: block;
+    margin: auto;
 }
 
 #restartButton{
-    margin: 2rem auto;
-    display: inline-block;
+    display: block;
+    margin: auto;
+}
+
+#newButton {
+    display: block;
+    margin-left: 2rem;
 }

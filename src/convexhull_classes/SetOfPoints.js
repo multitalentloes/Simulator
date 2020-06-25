@@ -4,13 +4,28 @@ class SetOfPoints{
         this.lines = [];
         this.RED="#AA0000";
         this.GREEN="#009900"
+        this.CH = null;
 
         this.grahamScan = this.grahamScan.bind(this);
+        this.draw = this.draw.bind(this);
     }
 
+    //if i restart, then i display then new points, even if paused
+    //if i generate new points when paused, i show them either way
+
     draw(c){
+        if (this.CH){
+            c.fillStyle = "#EEFFEE";
+            c.beginPath();
+            c.moveTo(this.CH[0].pos.x, this.CH[0].pos.y);
+            for(let p of this.CH){
+                c.lineTo(p.pos.x, p.pos.y);
+            }
+            c.closePath();
+            c.fill();
+        }
+        
         for(let l of this.lines){
-            
             l.draw(c);
         }
         
@@ -27,6 +42,7 @@ class SetOfPoints{
             return 1;
         })
 
+        yield true;
         yield true;
         let first = sorted[0], last = sorted[sorted.length-1]
         let upper = [sorted[0]], lower = [sorted[0]];
@@ -67,11 +83,9 @@ class SetOfPoints{
         for(let i = lower.length-2; i > 0; i--){
             ans.push(lower[i]);
         }
-        for(let i = 0; i < ans.length; i++){
-            ans[i].draw_color = "#008800";
-        }
+    
         this.CH = ans;
-        return;
+        yield;
     }
     
     cw(a, b, c){
