@@ -10,9 +10,6 @@ class SetOfPoints{
         this.draw = this.draw.bind(this);
     }
 
-    //if i restart, then i display then new points, even if paused
-    //if i generate new points when paused, i show them either way
-
     draw(c){
         if (this.CH){
             c.fillStyle = "#EEFFEE";

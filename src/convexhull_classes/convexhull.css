@@ -33,14 +33,52 @@
 #pauseButton{
     display: block;
     margin: auto;
+    padding: 5px;
+    border-radius: 15px;
+    background-color: #F7F7F7;
+    transition-duration: 0.4s;
+}
+
+#pauseButton:hover {
+    background-color: #DDDDDD;
+}
+
+#pauseButton:focus {
+    outline: none;
 }
 
 #restartButton{
     display: block;
     margin: auto;
+    padding: 5px;
+    border-radius: 15px;
+    background-color: #F7F7F7;
+    transition-duration: 0.4s;
+}
+
+#restartButton:hover {
+    background-color: #DDDDDD;
+}
+
+#restartButton:focus {
+    outline: none;
 }
 
 #newButton {
     display: block;
     margin-left: 2rem;
+    padding: 5px;
+    border-radius: 15px;
+    background-color: #F7F7F7;
+    transition-duration: 0.4s;
 }
+
+#newButton:hover {
+    background-color: #DDDDDD;
+}
+
+#newButton:focus {
+    outline: none;
+}
+
+
