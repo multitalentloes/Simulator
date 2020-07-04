@@ -1,3 +1,4 @@
+
 class Planet{
     constructor(x, y, is_movable, r, dx=0, dy=0, color="#AAAAAA"){
         this.pos = {
@@ -41,14 +42,33 @@ class Planet{
             "x" : this.DX(obj)/this.distance(obj),
             "y" : this.DY(obj)/this.distance(obj)
         }
+        
+        let forceScaler = this.area(this.radius)*this.area(obj.radius)/100;
 
         this.force = {
-            "x" : unitVector.x *= Math.pow(10, 5)/Math.pow(this.distance(obj), 2),
-            "y" : unitVector.y *= Math.pow(10, 5)/Math.pow(this.distance(obj), 2)
+            "x" : unitVector.x *= forceScaler/(50000+Math.pow(this.distance(obj), 2)),
+            "y" : unitVector.y *= forceScaler/(50000+Math.pow(this.distance(obj), 2))
         }
 
         this.acceleration.x += this.force.x;
         this.acceleration.y += this.force.y;
+    }
+
+    merge(obj){
+        const ratio = this.area(this.radius)/(this.area(this.radius)+this.area(obj.radius)) // how much of the area of the sums is from this planet
+        this.radius = Math.sqrt(Math.pow(this.radius, 2) + Math.pow(obj.radius, 2));
+        this.velocity.x *= ratio;
+        this.velocity.y *= ratio;
+        this.velocity.x += obj.velocity.x*(1-ratio);
+        this.velocity.y += obj.velocity.y*(1-ratio);
+    }
+
+    area(r){
+        return Math.PI*r*r;
+    }
+
+    isOverlapping(obj){
+        return this.radius + obj.radius > this.distance(obj);
     }
 
     distance(obj){

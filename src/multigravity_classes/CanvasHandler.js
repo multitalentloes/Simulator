@@ -6,7 +6,7 @@ class CanvasHandler{
 
         this.c = document.getElementById("canvas").getContext("2d");
 
-        this.sun = new Planet(this.WIDTH/2, this.HEIGHT/2, false, 100, 0, 0, "#FFA500");
+        //this.sun = new Planet(this.WIDTH/2, this.HEIGHT/2, false, 100, 0, 0, "#FFA500");
         this.bodies = [];
         //this.bodies.push(new Planet(120, 250, true, 20, 5, -4));
 
@@ -35,17 +35,30 @@ class CanvasHandler{
 
         this.bodies = this.bodies.filter(p => {
             const r = p.radius;
-            let is_too_close = p.distance(this.sun) < r + this.sun.radius;
             let is_too_far   = p.pos.x < 0 - r || p.pos.y < 0 - r || p.pos.x > this.WIDTH + r || p.pos.y > this.HEIGHT + r;
-            return !is_too_close && !is_too_far;
+            return !is_too_far;
         }); // remove those that are too close
 
+        for(let i = 0; i < this.bodies.length; i++){
+            for(let k = i+1; k < this.bodies.length; k++){
+                if (this.bodies[i].isOverlapping(this.bodies[k])){
+                    this.bodies[i].merge(this.bodies[k]);
+                    this.bodies.splice(k, 1);
+                    k--;
+                }
+            }
+        }
+
+        for(let i = 0; i < this.bodies.length; i++){
+            for(let k = 0; k < this.bodies.length; k++){
+                if (!(i===k)){
+                    this.bodies[i].calculateGravity(this.bodies[k]);
+                }
+            }
+        }
         for(let p of this.bodies){
-            p.calculateGravity(this.sun);
             p.move();
             p.draw(this.c);
         }
-        this.sun.move();
-        this.sun.draw(this.c);
     }
 }
