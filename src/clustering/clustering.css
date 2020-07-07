@@ -1,0 +1,10 @@
+#canvas{
+    width: 64rem;
+    height: 36rem;
+    margin: 4rem auto;
+    display: block;
+    border: 2px gray solid;
+    border-radius: 10px;
+}
+
+
