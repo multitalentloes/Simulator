@@ -4,6 +4,7 @@ class SetOfPoints{
         this.WIDTH = w;
         this.NUM_OF_CLUSTERS = num_of_clusters;
         this.clusters = null;
+        this.nextClusters = null
         this.centroids = this.generatePoints(this.NUM_OF_CLUSTERS, true);
         this.CH = null;
         this.points = this.generatePoints(num_of_points, false);
@@ -14,17 +15,20 @@ class SetOfPoints{
     }
 
     draw(c){
-        if (this.clusters){
-            for(let plist of this.clusters){
-                plist = this.grahamScan(plist);
-                c.fillStyle = "#CCFFCC";
-                c.beginPath();
-                c.moveTo(plist[0].pos.x, plist[0].pos.y);
-                for(let p of plist){
-                    c.lineTo(p.pos.x, p.pos.y);
+        c.clearRect(0, 0, this.WIDTH, this.HEIGHT);
+        if (this.nextClusters){
+            for(let plist of this.nextClusters){
+                if (plist.length > 0){
+                    plist = this.grahamScan(plist);
+                    c.fillStyle = "#CCFFCC";
+                    c.beginPath();
+                    c.moveTo(plist[0].pos.x, plist[0].pos.y);
+                    for(let p of plist){
+                        c.lineTo(p.pos.x, p.pos.y);
+                    }
+                    c.closePath();
+                    c.fill();
                 }
-                c.closePath();
-                c.fill();
             }
         }
 
@@ -37,9 +41,14 @@ class SetOfPoints{
         }
     }
 
-    k_means_clustering(){
+    *k_means_clustering(){
         let is_change_made = false;
         do{
+            /*
+                nåværende:
+                    beregn punktenes tilhørlighet
+                    flytt centroider (tegn imens)
+            */
             is_change_made = false;
             //marker nærmeste centroid for alle;
             for(let i = 0; i < this.points.length; i++){
@@ -62,21 +71,46 @@ class SetOfPoints{
             }
 
             for(let p of this.points){
-                //console.log(this.clusters);
                 this.clusters[p.cluster].push(p);
             }
 
             //flytt centroid til gjennomsnitt av sine punkter
+            let oldPos = this.centroids.map((e) => {
+                return {
+                    "x" : e.pos.x,
+                    "y" : e.pos.y
+                }
+            });
+            let newPos = [];
             for(let i = 0; i < this.NUM_OF_CLUSTERS; i++){
                 let len = this.clusters[i].length;
+                let x = this.centroids[i].pos.x;
+                let y = this.centroids[i].pos.y;
+
                 if (len > 0){
-                    this.centroids[i].pos.x = this.clusters[i].reduce((acc, e) => acc + e.pos.x, 0)/len;
-                    this.centroids[i].pos.y = this.clusters[i].reduce((acc, e) => acc + e.pos.y, 0)/len;
-                    //console.log(this.centroids[i].pos.x);
+                    x = this.clusters[i].reduce((acc, e) => acc + e.pos.x, 0)/len;
+                    y = this.clusters[i].reduce((acc, e) => acc + e.pos.y, 0)/len;
                 }
+
+                newPos.push({"x" : x, "y" : y})
             }
-            //console.log(is_change_made);
+
+            let frames = 30; // number of frames to use for centroids to glide into new positions
+            for(let i = 0; i < frames; i++){
+                for(let k = 0; k < this.centroids.length; k++){
+                    this.centroids[k].pos.x += (newPos[k].x - oldPos[k].x)/frames
+                    this.centroids[k].pos.y += (newPos[k].y - oldPos[k].y)/frames
+                }
+                yield;
+            }
+
+            this.nextClusters = this.clusters;
+            for(let i = 0; i < frames; i++){
+                yield;
+            }
+
         } while(is_change_made);
+        yield;
     }
 
     grahamScan(points){
@@ -138,10 +172,3 @@ class SetOfPoints{
         return res;
     }
 }
-/*
-    enkel:
-        for hver frame så gjør vi en iterasjon av k-means
-        beregner nærmeste centroid for alle punktene
-        tegner alle gruppene og centroid, bruker convex_hull til å tydeliggjøre gruppene
-        flytter centroid
-*/
