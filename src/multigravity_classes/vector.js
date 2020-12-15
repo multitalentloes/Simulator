@@ -25,8 +25,9 @@ class Vector{
         for (let b of bodies){
             const dist = this.distanceSquared(b);
             const unit = this.unitVectorTo(b);
-            this.dir.x += unit.x / dist;
-            this.dir.y += unit.y / dist;
+            const mass = Math.PI * b.radius * b.radius; // mass of the bodies are proportional to surface are in 2d
+            this.dir.x += unit.x * mass / dist;
+            this.dir.y += unit.y * mass / dist;
         }
         
         // now we need to scale the vector
