@@ -12,6 +12,10 @@ class CanvasHandler{
         this.generatePoints = this.generatePoints.bind(this);
     }
 
+    reset(){
+        this.points_set = new SetOfPoints(this.NUM_OF_POINTS, this.HEIGHT, this.WIDTH);
+    }
+
     update(){
         this.c.clearRect(0, 0, this.WIDTH, this.HEIGHT);
         this.points_set.draw(this.c);
