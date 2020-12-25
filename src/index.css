@@ -46,6 +46,11 @@ a {
     text-decoration: none;
 }
 
+a:link {
+    text-decoration: none;
+    color: black;
+}
+
 #title {
     text-align: center;
 }
