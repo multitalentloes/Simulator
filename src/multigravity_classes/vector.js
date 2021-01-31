@@ -1,5 +1,5 @@
 class Vector{
-    constructor(x, y, color="#000000"){
+    constructor(x, y){
         this.pos = {
             "x" : x,
             "y" : y
@@ -9,6 +9,7 @@ class Vector{
             "y" : 0
         }
 
+        this.curr_length = 0;
         this.LENGTH = 25;
     }
 
@@ -32,6 +33,7 @@ class Vector{
         
         // now we need to scale the vector
         const length = this.vectorLength(this.dir);
+        this.curr_length = length;
         this.dir.x /= length;
         this.dir.y /= length;
     }
@@ -42,7 +44,9 @@ class Vector{
             "x" : this.pos.x + this.LENGTH*this.dir.x,
             "y" : this.pos.y + this.LENGTH*this.dir.y
         }
-        
+
+        c.strokeStyle = this.calculateOpacity(this.curr_length);
+
         c.beginPath();
         c.moveTo(this.pos.x, this.pos.y);
         c.lineTo(toCoordinate.x, toCoordinate.y);
@@ -52,7 +56,8 @@ class Vector{
         c.moveTo(toCoordinate.x, toCoordinate.y);
         c.lineTo(toCoordinate.x - 15 * Math.cos(angle + Math.PI / 6), toCoordinate.y - 15 * Math.sin(angle + Math.PI / 6))
         c.stroke();
-        
+
+        this.curr_length = 0;
     }
 
     distanceSquared(body){
@@ -80,5 +85,17 @@ class Vector{
         ans.y /= length;
 
         return ans;
+    }
+
+    // map length to gray scale based on how much of max length we have
+    calculateOpacity(length){
+        let max_val = .05;
+        length = Math.min(length, max_val);
+        let rgb = (255 - Math.round((length / max_val)*255)).toString(16); 
+        if (rgb.length < 2){
+            rgb = "0" + rgb;
+        }
+
+        return "#" + rgb.repeat(3);
     }
 }

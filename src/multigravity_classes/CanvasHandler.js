@@ -11,7 +11,7 @@ class CanvasHandler{
         //this.bodies.push(new Planet(120, 250, true, 20, 5, -4));
 
         this.vectors = [] // list of all the vectors that will visualize the gravitational vector field
-        const VEC_DIST = 40
+        const VEC_DIST = 40;
         for(let i = 1; i*VEC_DIST - VEC_DIST/2< this.WIDTH; i++){
             for(let k = 1; k*VEC_DIST - VEC_DIST/2 < this.HEIGHT; k++){
                 this.vectors.push(new Vector(i*VEC_DIST - VEC_DIST/2, k*VEC_DIST - VEC_DIST/2))
@@ -67,6 +67,8 @@ class CanvasHandler{
     }
 
     drawArrow(fromx, fromy, tox, toy){
+        this.c.strokeStyle = "#000000";
+
         this.c.beginPath();
         this.c.moveTo(fromx, fromy);
         this.c.lineTo(tox, toy);

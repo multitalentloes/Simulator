@@ -20,6 +20,7 @@ class Planet{
 
     draw(c){
         c.fillStyle = this.color;
+        c.strokeStyle = "#000000";
         c.beginPath();
         c.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
         c.fill();
@@ -49,9 +50,11 @@ class Planet{
             "x" : unitVector.x *= forceScaler/(50000+Math.pow(this.distance(obj), 2)),
             "y" : unitVector.y *= forceScaler/(50000+Math.pow(this.distance(obj), 2))
         }
+        
+        const G = 1000; // gravitational constant to see iteresting results
 
-        this.acceleration.x += this.force.x;
-        this.acceleration.y += this.force.y;
+        this.acceleration.x += G*this.force.x/this.area(this.radius);
+        this.acceleration.y += G*this.force.y/this.area(this.radius);
     }
 
     merge(obj){
