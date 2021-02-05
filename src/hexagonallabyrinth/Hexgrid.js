@@ -8,8 +8,10 @@ class Hexgrid{
         this.hexagons = [];
 
         const XSTART = 90;
-        const YSTART = 70;
+        const YSTART = 90;
         this.xhexagons = 0;
+
+        this.animation = this.placeholder();
 
 
         for(let i = 0; 150 + i*radius*3 < this.WIDTH; i++){
@@ -29,10 +31,19 @@ class Hexgrid{
         }
         this.yhexagons = this.hexagons.length / this.xhexagons;
 
-        this.hexagons[0].setState("START");
-        this.hexagons[this.xhexagons*this.yhexagons-1].setState("END");
+        this.startNode = 0;
+        this.goalNode = this.hexagons.length - 1;
+
+        this.hexagons[this.startNode].setState("START");
+        this.hexagons[this.goalNode].setState("END");
 
         this.UF = new UnionFind(this.hexagons.length);
+    }
+
+    *placeholder(){
+        while (true){
+            yield;
+        }
     }
 
     draw(c){
@@ -49,7 +60,7 @@ class Hexgrid{
         this.UF = new UnionFind(this.hexagons.length);
     }
     
-    generateKruskalLabyrinth(){
+    *generateKruskalLabyrinth(){
         // create a shuffled list of all the walls
         // each wall will be added if we for all nodes add 3 pairs, one for each neighboor along wall 0->2
         this.reset_grid();
@@ -86,6 +97,9 @@ class Hexgrid{
                 this.UF.unify(W[0], W[1]);
                 let diff = W[1] - W[0];
                 
+                this.hexagons[W[0]].setState("MERGING");
+                this.hexagons[W[1]].setState("MERGING");
+
                 if (diff == 1){ //up/down
                     this.hexagons[W[0]].edges[1] = true;
                     this.hexagons[W[1]].edges[4] = true;
@@ -108,25 +122,32 @@ class Hexgrid{
                     this.hexagons[W[0]].edges[0] = true;
                     this.hexagons[W[1]].edges[3] = true;
                 }
+                yield;
+                yield;
+                yield;
+                this.hexagons[W[0]].setState("DEFAULT");
+                this.hexagons[W[1]].setState("DEFAULT");
             }
             if (this.UF.numSets == 1) break;
         }
     }
 
-    BFS(){  
+    *BFS(){  
         let visited = [];
         let prev = []
         for (let i = 0; i < this.hexagons.length; i++){
             visited.push(false);
             prev.push(-1); // -1 indicates no previous node
         }
+        visited[this.startNode] = true;
 
-        let q = [0]; // add the starting node to the queue
+        let q = [this.startNode]; // add the starting node to the queue
 
         while (q.length > 0){
             let node = q.shift();
             this.hexagons[node].setState("VISITED")
-            if (node == this.hexagons.length - 1) break;
+            yield;
+            if (node == this.goalNode) break;
 
             let adj = this.getAdjacentNodeIdxs(node);
 
@@ -138,9 +159,20 @@ class Hexgrid{
                     this.hexagons[next].setState("IN_QUEUE");
                 }
             }
+            yield;
         }
 
+        let node = this.hexagons.length - 1;
+        let path_animation_sequence = [];
+        do {
+            path_animation_sequence.push(node);
+            node = prev[node]; 
+        } while (node != -1);
 
+        for(let i = path_animation_sequence.length - 1; i >= 0; i--){
+            this.hexagons[path_animation_sequence[i]].setState("IN_PATH");
+            yield;
+        }
     }
 
     getAdjacentNodeIdxs(node){
