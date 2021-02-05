@@ -14,5 +14,5 @@ document.addEventListener('DOMContentLoaded', function() {
 		CH.update(e.offsetX*scalex, e.offsetY*scaley);
 	});
 
-	this.getElementById("toggleRays").addEventListener("click", function(e){CH.flipRays();})
+	this.getElementById("lightsource_toggleRays").addEventListener("click", function(e){CH.flipRays();})
 }, false);

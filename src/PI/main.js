@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     CH = new CanvasHandler();
-    let cnv = this.getElementById("canvas");
+    let cnv = this.getElementById("PI_canvas");
 
     setInterval(() => {
         CH.update();

@@ -4,7 +4,7 @@ class CanvasHandler{
         this.HEIGHT = 1080;
         this.NUM_OF_POINTS = 30;
 
-        this.c = document.getElementById("canvas").getContext("2d");
+        this.c = document.getElementById("convexhull_canvas").getContext("2d");
         
         this.points_set = new SetOfPoints(this.generatePoints(this.NUM_OF_POINTS));
         this.nextFrame = this.points_set.grahamScan();

@@ -3,7 +3,7 @@ class CanvasHandler{
         this.WIDTH  = 1080;
         this.HEIGHT = 1080;
 
-        this.c = document.getElementById("canvas").getContext("2d");
+        this.c = document.getElementById("PI_canvas").getContext("2d");
 
         this.insideCNT = 0;
         this.outsideCNT = 0;
