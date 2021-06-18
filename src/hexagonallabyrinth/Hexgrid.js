@@ -60,6 +60,40 @@ class Hexgrid{
         this.UF = new UnionFind(this.hexagons.length);
     }
     
+    // perform a randomized DFS, breach walls where the dfs goes
+    *generateDFSLabyrinth(){
+        this.reset_grid();
+        console.log("a");
+        let stack = [0]; // use this list a stack for the dfs
+        let visited = [true] // first node is already in the stack
+        for(let i = 0; i < this.hexagons.length - 1; i++){
+            visited.push(false);
+        }
+        console.log("b");
+        while (stack.length > 0){ // while some nodes are not fully explored
+            let curr = stack.pop();
+            let neighbors = shuffleArray(this.getNeighboringNodeIdxs(curr)); // randomize the order in which the neighbors will be visited
+            console.log(neighbors);
+            for (let n of neighbors){
+                if (!visited[n]){ // if we havent visited this node yet
+                    visited[n] = true;
+                    this.removeWall(Math.min(curr, n), Math.max(curr, n)); 
+                    stack.push(n);
+                    console.log("c");
+                    yield;
+                }
+            }
+        }
+
+        // to make the solution a bit more interesting lets poke some holes in the labyrinth as it only has one solution at the moment
+        for(let i = 0; i < this.hexagons.length; i++){
+            let n = shuffleArray(this.getNeighboringNodeIdxs(i))[0]; // pick a random neighbor
+            this.removeWall(Math.min(i, n), Math.max(i, n))
+            yield;
+        }
+    }
+
+    //union neighboring nodes until we are left with only one component in the graph
     *generateKruskalLabyrinth(){
         // create a shuffled list of all the walls
         // each wall will be added if we for all nodes add 3 pairs, one for each neighboor along wall 0->2
@@ -83,45 +117,19 @@ class Hexgrid{
         }
         
         // shuffle the walls
-        for (let i = 0; i < walls.length; i++){
-            let idx = Math.floor(Math.random()*walls.length);
-            let tmp = walls[idx];
-            walls[idx] = walls[i];
-            walls[i] = tmp;
-        }
+        walls = shuffleArray(walls);
         
         //go over the walls and remove them if their nodes are in seperate sets, break early if we only have 1 set
         
         for(let W of walls){
             if (!this.UF.isSameSet(W[0], W[1])){
                 this.UF.unify(W[0], W[1]);
-                let diff = W[1] - W[0];
                 
                 this.hexagons[W[0]].setState("MERGING");
                 this.hexagons[W[1]].setState("MERGING");
 
-                if (diff == 1){ //up/down
-                    this.hexagons[W[0]].edges[1] = true;
-                    this.hexagons[W[1]].edges[4] = true;
-                }
-                else if (diff == col){
-                    if (W[0]%duoCol < col){ // if we are on starting column
-                        this.hexagons[W[0]].edges[0] = true;
-                        this.hexagons[W[1]].edges[3] = true;
-                    }
-                    else{
-                        this.hexagons[W[0]].edges[5] = true;
-                        this.hexagons[W[1]].edges[2] = true;
-                    }
-                }
-                else if (diff == col - 1){
-                    this.hexagons[W[0]].edges[5] = true;
-                    this.hexagons[W[1]].edges[2] = true;
-                }
-                else if(diff == col + 1){
-                    this.hexagons[W[0]].edges[0] = true;
-                    this.hexagons[W[1]].edges[3] = true;
-                }
+                this.removeWall(W[0], W[1]); 
+
                 yield;
                 yield;
                 yield;
@@ -175,6 +183,26 @@ class Hexgrid{
         }
     }
 
+    getNeighboringNodeIdxs(node){
+        let ans = [];
+        let col = this.yhexagons;
+        let row = this.xhexagons;
+
+        let upperColumn = node%(2*col) < col; // kinda bad name, but the first column starts "above" the next, these higher columns are "upperColumn"
+        let top = node%col == 0;
+        let bottom = node%col == col-1;
+        let left = node < col;
+        let right = node >= col*(row-1)
+
+        if (!right && (!bottom || upperColumn)) ans.push(node + col + (upperColumn ? 0 : 1)); // go southeast
+        if (!bottom) ans.push(node+1)// go south
+        if (!left && (!bottom || upperColumn)) ans.push(node - col + (upperColumn ? 0 : 1)); // go southwest
+        if (!left && (!top || !upperColumn)) ans.push(node - col + (upperColumn ? -1 : 0)); // go northwest
+        if (!top) ans.push(node-1)// go north
+        if (!right && (!top || !upperColumn)) ans.push(node + col + (upperColumn ? -1 : 0)); // go northeast
+        return ans;
+    }
+
     getAdjacentNodeIdxs(node){
         let ans = [];
         let col = this.yhexagons;
@@ -196,5 +224,45 @@ class Hexgrid{
         
         return ans;
     }
+
+    // given indices of two neighboring hexagons, remove the edge between them. Assumes idxa < idxb
+    removeWall(idxa, idxb){
+        let col = this.yhexagons;
+        let duoCol = 2*col;
+        let diff = idxb - idxa;
+
+        if (diff == 1){ //up/down
+            this.hexagons[idxa].edges[1] = true;
+            this.hexagons[idxb].edges[4] = true;
+        }
+        else if (diff == col){
+            if (idxa%duoCol < col){ // if we are on starting column
+                this.hexagons[idxa].edges[0] = true;
+                this.hexagons[idxb].edges[3] = true;
+            }
+            else{
+                this.hexagons[idxa].edges[5] = true;
+                this.hexagons[idxb].edges[2] = true;
+            }
+        }
+        else if (diff == col - 1){
+            this.hexagons[idxa].edges[5] = true;
+            this.hexagons[idxb].edges[2] = true;
+        }
+        else if(diff == col + 1){
+            this.hexagons[idxa].edges[0] = true;
+            this.hexagons[idxb].edges[3] = true;
+        }
+    }
+}
+
+function shuffleArray(array){
+    for (let i = 0; i < array.length; i++){
+        let idx = Math.floor(Math.random()*array.length);
+        let tmp = array[idx];
+        array[idx] = array[i];
+        array[i] = tmp;
+    }
+    return array
 }
 

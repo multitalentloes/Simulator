@@ -21,6 +21,10 @@ class CanvasHandler{
         this.grid.animation = this.grid.generateKruskalLabyrinth();
     }
 
+    generateDFSLabyrinth(){
+        this.grid.animation = this.grid.generateDFSLabyrinth();
+    }
+
     BFS(){
         this.grid.animation = this.grid.BFS();
     }
