@@ -23,4 +23,10 @@ class Object{
 
         this.is_movable = is_movable;
     }
+
+    reset_force() {
+        this.F_old = this.F;
+        this.F.x = 0;
+        this.F.y = 0;
+    }
 }

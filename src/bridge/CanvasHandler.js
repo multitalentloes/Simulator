@@ -6,9 +6,9 @@ class CanvasHandler{
 
         this.bridge = [];
 
-        this.bridge_point_mass = 1000;
-        this.g = 1;
-        this.k = 20;
+        this.bridge_point_mass = 10;
+        this.g = 0.001;
+        this.k = 1;
         this.BRIDGE_POINTS = 100;
 
         let y = 200;
@@ -22,13 +22,45 @@ class CanvasHandler{
     }
 
     update_bridge(dt) {
-        this.update_all_bridge_pos(dt);
+        this.bridge[0].update_pos(dt);
 
-        this.update_bridge_oscillator_forces();
+        for (let i = 1; i < this.BRIDGE_POINTS; i++) {
+            this.bridge[i].update_pos(dt);
 
-        this.update_bridge_gravity();
+            this.bridge[i].reset_force();
 
-        this.update_all_bridge_vel(dt);
+            this.apply_bridge_forces(this.bridge[i-1], this.bridge[i]);
+
+            this.bridge[i].apply_gravity(this.g)
+            
+            this.bridge[i-1].update_vel(dt);
+        }
+
+        this.bridge[this.BRIDGE_POINTS - 1].reset_force();
+        this.apply_bridge_forces(this.bridge[this.BRIDGE_POINTS - 2], this.bridge[this.BRIDGE_POINTS - 1]);
+        this.bridge[this.BRIDGE_POINTS - 1].update_vel(dt);
+    }
+
+    apply_bridge_forces(p1, p2) {    
+        let dx = p2.pos.x - p1.pos.x;
+        let dy = p2.pos.y - p1.pos.y;
+        let dist = Math.sqrt(dx*dx + dy*dy); 
+
+        let force = {
+            "x" : (dx / dist) * (dist - this.bridge_EQ) * this.k,
+            "y" : (dy / dist) * (dist - this.bridge_EQ) * this.k
+        }
+
+        // update forces
+        if (p1.is_movable) {
+            p1.F.x += force.x;
+            p1.F.y += force.y;
+        }
+
+        if (p2.is_movable) {
+            p2.F.x -= force.x;
+            p2.F.y -= force.y;
+        }
     }
 
     draw_bridge() {
@@ -41,71 +73,10 @@ class CanvasHandler{
         }
         this.c.stroke();
 
-        /*for (let i = 0; i < this.BRIDGE_POINTS; i++) {
+        /*
+        for (let i = 0; i < this.BRIDGE_POINTS; i++) {
             this.bridge[i].draw(this.c);
-        }*/
-    }
-
-    update_all_bridge_pos(dt) {
-        for (let i = 0; i < this.BRIDGE_POINTS; i++) {
-            if (this.bridge[i].is_movable) {
-                this.bridge[i].update_pos(dt);
-                this.bridge[i].F_old = this.bridge[i].F;
-                this.bridge[i].F.x = 0;
-                this.bridge[i].F.y = 0;
-            }
         }
-    }
-
-    update_bridge_oscillator_forces() {
-        for (let i = 0; i < this.BRIDGE_POINTS - 1; i++) {
-            let point1 = this.bridge[i];
-            let point2 = this.bridge[i+1];
-        
-            let dx = point2.pos.x - point1.pos.x;
-            let dy = point2.pos.y - point1.pos.y;
-
-            let dist = Math.sqrt(dx*dx + dy*dy); 
-
-            // unit vector
-            let vector = {
-                "x" : dx / dist,
-                "y" : dy / dist,
-            }
-
-            // force vector
-            let force = {
-                "x" : vector.x * (dist - this.bridge_EQ) * this.k,
-                "y" : vector.y * (dist - this.bridge_EQ) * this.k
-
-            }
-
-            // update forces
-            if (point1.is_movable) {
-                point1.F.x += force.x;
-                point1.F.y += force.y;
-            }
-
-            if (point2.is_movable) {
-                point2.F.x -= force.x;
-                point2.F.y -= force.y;
-            }
-        }
-    }
-
-    update_bridge_gravity() {
-        for (let i = 0; i < this.BRIDGE_POINTS; i++) {
-            if (this.bridge[i].is_movable) {
-                this.bridge[i].F.y += this.g; 
-            }
-        }
-    }
-
-    update_all_bridge_vel(dt) {
-        for (let i = 0; i < this.BRIDGE_POINTS; i++) {
-            if (this.bridge[i].is_movable) {
-                this.bridge[i].update_vel(dt);
-            }
-        }
+        */
     }
 }

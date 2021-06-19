@@ -15,6 +15,10 @@ class Point extends Object{
         this.v.y += 0.5 * ((this.F.y + this.F_old.y) / this.m) * dt;
     }
 
+    apply_gravity(g) {
+        this.F.y += this.m * g;
+    }
+
     draw(c){
         c.beginPath();
         c.arc(this.pos.x, this.pos.y, 3, 0, 2 * Math.PI);
