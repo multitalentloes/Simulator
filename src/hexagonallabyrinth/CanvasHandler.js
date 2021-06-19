@@ -28,4 +28,7 @@ class CanvasHandler{
     BFS(){
         this.grid.animation = this.grid.BFS();
     }
+    AStarMeetInTheMiddle(){
+        this.grid.animation = this.grid.AStarMeetInTheMiddle();
+    }
 }

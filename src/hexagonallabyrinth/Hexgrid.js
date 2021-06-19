@@ -31,6 +31,9 @@ class Hexgrid{
         }
         this.yhexagons = this.hexagons.length / this.xhexagons;
 
+        this.xexagonCoordinates;
+        this.setHexagonCoordinates();
+
         this.startNode = 0;
         this.goalNode = this.hexagons.length - 1;
 
@@ -59,28 +62,37 @@ class Hexgrid{
         }
         this.UF = new UnionFind(this.hexagons.length);
     }
+
+    setHexagonCoordinates(){
+        this.hexagonCoordinates = [];
+        for(let i = 0; i < this.xhexagons; i++){ // for each column
+            for (let k = 0; k < this.yhexagons; k++){ // for each cell in that column (iterates over rows)
+                this.hexagonCoordinates.push({ // based on https://www.redblobgames.com/grids/hexagons/#distances
+                    "x" : i,
+                    "y" : i/2 - k,
+                    "z" : i - i/2 + k
+                });
+            }
+        }
+    }
     
     // perform a randomized DFS, breach walls where the dfs goes
     *generateDFSLabyrinth(){
         this.reset_grid();
-        console.log("a");
         let stack = [0]; // use this list a stack for the dfs
         let visited = [true] // first node is already in the stack
         for(let i = 0; i < this.hexagons.length - 1; i++){
             visited.push(false);
         }
-        console.log("b");
         while (stack.length > 0){ // while some nodes are not fully explored
             let curr = stack.pop();
             let neighbors = shuffleArray(this.getNeighboringNodeIdxs(curr)); // randomize the order in which the neighbors will be visited
-            console.log(neighbors);
             for (let n of neighbors){
                 if (!visited[n]){ // if we havent visited this node yet
                     visited[n] = true;
                     this.removeWall(Math.min(curr, n), Math.max(curr, n)); 
                     stack.push(n);
-                    console.log("c");
-                    yield;
+                    //yield;
                 }
             }
         }
@@ -89,7 +101,7 @@ class Hexgrid{
         for(let i = 0; i < this.hexagons.length; i++){
             let n = shuffleArray(this.getNeighboringNodeIdxs(i))[0]; // pick a random neighbor
             this.removeWall(Math.min(i, n), Math.max(i, n))
-            yield;
+            //yield;
         }
     }
 
@@ -183,7 +195,113 @@ class Hexgrid{
         }
     }
 
-    getNeighboringNodeIdxs(node){
+    *AStarMeetInTheMiddle(){ // not actually optimal
+        let visited = []; // visited[idx] == 0 -> unvisited, 1 -> visted by a* number one, 2 -> visited by a* number two
+        let numNodes = this.hexagons.length;
+        let firstSearchLastNode;
+        let secondSearchLastNode;
+        
+        for (let i = 0; i < numNodes; i++){
+            visited.push(0);
+        }
+        let est_dist = this.minDistance(this.startNode, this.goalNode)
+
+        let PQ1 = [{"dist_here" : 0, "est_dist_left" : est_dist, "heuristic" : est_dist, "node" : this.startNode, "prev" : -1}];
+
+        let PQ2 = [{"dist_here" : 0, "est_dist_left" : est_dist, "heuristic" : est_dist, "node" : this.goalNode, "prev" : -1}];
+
+        let prev = []; // keep track of the previous node visited to construct the solution path
+        for (let i = 0; i < numNodes; i++){
+            prev.push(-1); // no previous node yet
+        }
+
+        while (true){ // logic for terminating the search is inside the loop
+
+            let curr1 = PQ1.shift();
+            this.hexagons[curr1.node].setState("VISITED");
+            if (visited[curr1.node] == 2) {
+                firstSearchLastNode = curr1.prev;
+                secondSearchLastNode = curr1.node;
+                break; // terminate as we found a node the other search has visited
+            }
+            if (visited[curr1.node] == 1) continue;
+            visited[curr1.node] = 1;
+            prev[curr1.node] = curr1.prev;
+
+            let neighbors = shuffleArray(this.getAdjacentNodeIdxs(curr1.node));
+
+            for (let n of neighbors){
+                if (visited[n] != 1){ // consider nodes not yet visited in this search
+                    let nextNode = {};
+                    nextNode.dist_here = curr1.dist_here+1;
+                    nextNode.est_dist_left = this.minDistance(curr1.node, this.goalNode);
+                    nextNode.heuristic = nextNode.dist_here + nextNode.est_dist_left;
+                    nextNode.node = n;
+                    nextNode.prev = curr1.node;
+                    
+                    PQ1.push(nextNode);
+                }
+            }
+
+            let curr2 = PQ2.shift();
+            this.hexagons[curr2.node].setState("VISITED");
+            if (visited[curr2.node] == 1) {
+                secondSearchLastNode = curr2.prev;
+                firstSearchLastNode = curr2.node;
+                break; // terminate as we found a node the other search has visited
+            }
+            if (visited[curr2.node] == 2) continue;
+            visited[curr2.node] = 2;
+            prev[curr2.node] = curr2.prev;
+
+            neighbors = shuffleArray(this.getAdjacentNodeIdxs(curr2.node));
+            yield;
+
+            for (let n of neighbors){
+                if (visited[n] != 2){ // consider nodes not yet visited in this search
+                    let nextNode = {};
+                    nextNode.dist_here = curr2.dist_here+1;
+                    nextNode.est_dist_left = this.minDistance(curr2.node, this.startNode);
+                    nextNode.heuristic = nextNode.dist_here + nextNode.est_dist_left;
+                    nextNode.node = n;
+                    nextNode.prev = curr2.node;
+                    
+                    PQ2.push(nextNode);
+                }
+            }
+
+            PQ1.sort(this.comparePQElements);
+            PQ2.sort(this.comparePQElements);
+        }
+
+        let path = [];
+        let firstSearchNode = firstSearchLastNode
+        while (prev[firstSearchNode] != -1){
+            path.unshift(firstSearchNode);
+            firstSearchNode = prev[firstSearchNode];
+        }
+
+        let secondSearchNode = secondSearchLastNode
+        while (prev[secondSearchNode] != -1){
+            path.push(secondSearchNode);
+            secondSearchNode = prev[secondSearchNode];
+        }
+
+        for(let idx of path){
+             this.hexagons[idx].setState("IN_PATH");
+             yield;
+        }
+    }
+
+    comparePQElements(a, b){
+        let heurDiff = a.heuristic - b.heuristic;
+
+        if (heurDiff == 0) return heurDiff; // always pick node closest to goal
+
+        return b.dist_here - a.dist_here; // tiebreaker: use node that is the furthest away from start
+    }
+
+    getNeighboringNodeIdxs(node){ // returns alle the nodes next to the current one in the animated grid
         let ans = [];
         let col = this.yhexagons;
         let row = this.xhexagons;
@@ -203,7 +321,7 @@ class Hexgrid{
         return ans;
     }
 
-    getAdjacentNodeIdxs(node){
+    getAdjacentNodeIdxs(node){ // returns all the nodes next to the current one in the graph
         let ans = [];
         let col = this.yhexagons;
         let row = this.xhexagons;
@@ -253,6 +371,15 @@ class Hexgrid{
             this.hexagons[idxa].edges[0] = true;
             this.hexagons[idxb].edges[3] = true;
         }
+    }
+
+    minDistance(idxa, idxb){ // the smallest hexagon distance between two hexagons 
+        let a = this.hexagonCoordinates[idxa];
+        let b = this.hexagonCoordinates[idxb];
+        let dx = Math.abs(a.x-b.x);
+        let dy = Math.abs(a.y-b.y);
+        let dz = Math.abs(a.z-b.z);
+        return Math.max(dx, dy, dz);
     }
 }
 
