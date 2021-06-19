@@ -1,93 +1,111 @@
 class CanvasHandler{
     constructor(){
-        this.MASS_CONSTANT = 0.05;
         this.WIDTH = 1920;
         this.HEIGHT = 1080;
-        this.BRIDGE_POINTS = 100;
         this.c = document.getElementById("canvas").getContext("2d");
 
-        this.objects = [];
-        this.joints = [];
+        this.bridge = [];
+
+        this.bridge_point_mass = 1000;
+        this.g = 1;
+        this.k = 20;
+        this.BRIDGE_POINTS = 100;
 
         let y = 200;
         for(let i = 0; i < this.BRIDGE_POINTS; i++){
             let is_in_middle = (i != 0 && i != this.BRIDGE_POINTS-1);
             
-            //y = this.getY(y, i);
-            this.objects.push(new Point(i*this.WIDTH/(this.BRIDGE_POINTS-1), y, is_in_middle, 12, this.MASS_CONSTANT));
+            this.bridge.push(new Point(i*this.WIDTH/(this.BRIDGE_POINTS - 1), y, is_in_middle, this.bridge_point_mass));
         }
 
-        for(let i = 0; i < this.BRIDGE_POINTS-1; i++){
-            this.objects.push(new DistantJoint(NaN, NaN, false, this.objects[i], this.objects[i+1], this.WIDTH/(this.BRIDGE_POINTS+80)));
-        }
-
-        this.objects.push(new Circle(500, 50, true, 12, this.MASS_CONSTANT));
-        
-        this.update = this.update.bind(this);
-        this.calculateAllForces = this.calculateAllForces.bind(this);
-        this.drawAll = this.drawAll.bind(this);
+        this.bridge_EQ = this.bridge[1].pos.x - this.bridge[0].pos.x;
     }
 
-    update(){
+    update_bridge(dt) {
+        this.update_all_bridge_pos(dt);
+
+        this.update_bridge_oscillator_forces();
+
+        this.update_bridge_gravity();
+
+        this.update_all_bridge_vel(dt);
+    }
+
+    draw_bridge() {
         this.c.clearRect(0, 0, this.WIDTH, this.HEIGHT);
 
-        this.calculateAllForces();
-        this.calculateAllCollisions();
+        this.c.beginPath();
+        this.c.moveTo(this.bridge[0].pos.x, this.bridge[0].pos.y);
+        for (let i = 1; i < this.BRIDGE_POINTS; i++) {
+            this.c.lineTo(this.bridge[i].pos.x, this.bridge[i].pos.y);
+        }
+        this.c.stroke();
+
+        /*for (let i = 0; i < this.BRIDGE_POINTS; i++) {
+            this.bridge[i].draw(this.c);
+        }*/
+    }
+
+    update_all_bridge_pos(dt) {
+        for (let i = 0; i < this.BRIDGE_POINTS; i++) {
+            if (this.bridge[i].is_movable) {
+                this.bridge[i].update_pos(dt);
+                this.bridge[i].F_old = this.bridge[i].F;
+                this.bridge[i].F.x = 0;
+                this.bridge[i].F.y = 0;
+            }
+        }
+    }
+
+    update_bridge_oscillator_forces() {
+        for (let i = 0; i < this.BRIDGE_POINTS - 1; i++) {
+            let point1 = this.bridge[i];
+            let point2 = this.bridge[i+1];
         
-        for(let obj of this.objects){
-            obj.calculateAcceleration();
-            obj.move();
-            obj.resetForces();
-        }   
-        this.drawAll();
-    }
+            let dx = point2.pos.x - point1.pos.x;
+            let dy = point2.pos.y - point1.pos.y;
 
+            let dist = Math.sqrt(dx*dx + dy*dy); 
 
-    calculateAllForces(){
-        for(let obj of this.objects){
-            obj.calculateForces();
-        }
-    }
+            // unit vector
+            let vector = {
+                "x" : dx / dist,
+                "y" : dy / dist,
+            }
 
-    calculateAllCollisions(){
-        for(let i = 0; i < this.objects.length; i++){
-            for(let j = i + 1; j < this.objects.length; j++){
-                this.calculateCollisions(this.objects[i], this.objects[j]); // updates forces for objects[i] and objects[j] from the collision between them
+            // force vector
+            let force = {
+                "x" : vector.x * (dist - this.bridge_EQ) * this.k,
+                "y" : vector.y * (dist - this.bridge_EQ) * this.k
+
+            }
+
+            // update forces
+            if (point1.is_movable) {
+                point1.F.x += force.x;
+                point1.F.y += force.y;
+            }
+
+            if (point2.is_movable) {
+                point2.F.x -= force.x;
+                point2.F.y -= force.y;
             }
         }
     }
 
-    calculateCollisions(obj1, obj2){ // (circle, circle), (circle, rectangle), (line, rectangle), (rectangle, rectangle), (line, circle), (line, line)? 
-        if ((obj1.TYPE == "DISTANT_JOINT" && obj2.TYPE=="CIRCLE") || (obj2.TYPE == "DISTANT_JOINT" && obj1.TYPE=="CIRCLE")){
-            var distance = Math.pow(obj2.pos.x - obj1.pos.x, 2) + Math.pow(obj2.pos.y - obj1.pos.y, 2);
-            //console.log(Math.sqrt(distance));
-            if (Math.sqrt(distance) <= 10) { 
-                console.log("SKRY")
-               
-                var obj1VX = (obj1.mass - obj2.mass) * obj1.v.x / (obj1.mass + obj2.mass) + 2 * obj2.mass * obj2.v.x / (obj1.mass + obj2.mass);
-                var obj1VY = (obj1.mass - obj2.mass) * obj1.v.y / (obj1.mass + obj2.mass) + 2 * obj2.mass * obj2.v.y / (obj1.mass + obj2.mass);
-                
-                var obj2VX = 2 * obj1.mass * obj1.v.x / (obj1.mass + obj2.mass) + (obj2.mass - obj1.mass) * obj2.v.x / (obj1.mass + obj2.mass);
-                var obj2VY = 2 * obj1.mass * obj1.v.y / (obj1.mass + obj2.mass) + (obj2.mass - obj1.mass) * obj2.v.y / (obj1.mass + obj2.mass);
-                //console.log(obj1.v.y, obj2.v.y);
-                obj1.calculateCollision(obj1VX, obj1VY);
-                obj2.calculateCollision(obj2VX, obj2VY);
+    update_bridge_gravity() {
+        for (let i = 0; i < this.BRIDGE_POINTS; i++) {
+            if (this.bridge[i].is_movable) {
+                this.bridge[i].F.y += this.g; 
             }
         }
     }
 
-    drawAll(){
-        for(let obj of this.objects){
-            obj.draw(this.c);
-        }
-    }
-
-    getY(y, i){
-        if (i == 0 || i == this.BRIDGE_POINTS-1){
-            return 200;
-        }
-        else{
-            return y + Math.floor(Math.random()*10)*(Math.random() >= 0.5 ? 1 : -1);
+    update_all_bridge_vel(dt) {
+        for (let i = 0; i < this.BRIDGE_POINTS; i++) {
+            if (this.bridge[i].is_movable) {
+                this.bridge[i].update_vel(dt);
+            }
         }
     }
 }
