@@ -4,13 +4,14 @@ class CanvasHandler{
         this.HEIGHT = 1080;
         this.c = document.getElementById("canvas").getContext("2d");
 
-        this.bridge = [];
 
-        this.bridge_point_mass = 10;
-        this.g = 0.001;
-        this.k = 1;
+        this.bridge_point_mass = 0.9;
+        this.g = 0.004;
+        this.k = 0.1;
+        this.l = 0.999;
         this.BRIDGE_POINTS = 100;
 
+        this.bridge = [];
         let y = 200;
         for(let i = 0; i < this.BRIDGE_POINTS; i++){
             let is_in_middle = (i != 0 && i != this.BRIDGE_POINTS-1);
@@ -34,6 +35,8 @@ class CanvasHandler{
             this.bridge[i].apply_gravity(this.g)
             
             this.bridge[i-1].update_vel(dt);
+
+            this.bridge[i-1].apply_dampening(this.l);
         }
 
         this.bridge[this.BRIDGE_POINTS - 1].reset_force();

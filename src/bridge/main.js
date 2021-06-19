@@ -23,6 +23,4 @@ function mainLoop(timestamp) {
 	requestAnimationFrame(mainLoop);
 }
 
-
-
 requestAnimationFrame(mainLoop);
