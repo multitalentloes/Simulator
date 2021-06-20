@@ -92,7 +92,7 @@ class Hexgrid{
                     visited[n] = true;
                     this.removeWall(Math.min(curr, n), Math.max(curr, n)); 
                     stack.push(n);
-                    //yield;
+                    yield;
                 }
             }
         }
@@ -101,7 +101,7 @@ class Hexgrid{
         for(let i = 0; i < this.hexagons.length; i++){
             let n = shuffleArray(this.getNeighboringNodeIdxs(i))[0]; // pick a random neighbor
             this.removeWall(Math.min(i, n), Math.max(i, n))
-            //yield;
+            yield;
         }
     }
 
@@ -142,8 +142,6 @@ class Hexgrid{
 
                 this.removeWall(W[0], W[1]); 
 
-                yield;
-                yield;
                 yield;
                 this.hexagons[W[0]].setState("DEFAULT");
                 this.hexagons[W[1]].setState("DEFAULT");
