@@ -2,7 +2,7 @@ class CanvasHandler{
     constructor(){
         this.WIDTH  = 1920;
         this.HEIGHT = 1080;
-        this.NUM_OF_TRIPS = 2;
+        this.NUM_OF_TRIPS = 3;
         this.TRIP_SIZE = 6;
 
         this.c = document.getElementById("canvas").getContext("2d");

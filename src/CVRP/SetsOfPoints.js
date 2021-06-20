@@ -1,8 +1,3 @@
-/*
-    This class will keep track of all the nodes for the travelling salesman to visit
-    Each node will point to one other node, the hillcliming will then swap two random
-    edges if they improve the total distance at all. 
-*/
 
 class SetsOfPoints{
     constructor(num_of_sets, set_size, HEIGHT, WIDTH){
@@ -38,7 +33,7 @@ class SetsOfPoints{
     }
 
     climb(){  // steepest ascent hill climb
-        // if we have reached the local minima we just skip the climbing altogether
+        // TODO: if we have reached the local minima we just skip the climbing altogether
         let best_diff = 0;
         let best_truck_a = -1;
         let best_truck_b = -1;
@@ -50,13 +45,11 @@ class SetsOfPoints{
         for (let truck = 0; truck < this.num_of_sets; truck++){
             for (let idx_a = 0; idx_a < this.set_size; idx_a++){
                 for (let idx_b = idx_a + 2; idx_b < this.set_size; idx_b++){
-                    
                     let a_1 = this.trips[truck][idx_a];
                     let a_2 = this.trips[truck][(idx_a+1)%this.set_size];
                     let a_3 = this.trips[truck][(idx_a+2)%this.set_size];
                     let b_1 = this.trips[truck][idx_b];
                     let b_2 = this.trips[truck][(idx_b+1)%this.set_size];
-    
                     let removed = a_1.dist(a_2) + a_2.dist(a_3) + b_1.dist(b_2);
     
                     let added = a_2.dist(b_1) + a_2.dist(b_2) + a_1.dist(a_3);
@@ -68,37 +61,36 @@ class SetsOfPoints{
                         best_a_2 = (idx_a+1)%this.set_size;
                         best_b_2 = (idx_b+1)%this.set_size;
                         move_type = "intra_relocate";
-
                     }
                 }
             }
         }
 
-        // intra relocate
-        for (let truck = 0; truck < this.num_of_sets; truck++){
-            for (let idx_a = 0; idx_a < this.set_size; idx_a++){
-                for (let idx_b = idx_a + 2; idx_b < this.set_size; idx_b++){
+        // intra 2 opt
+        // for (let truck = 0; truck < this.num_of_sets; truck++){
+        //     for (let idx_a = 0; idx_a < this.set_size; idx_a++){
+        //         for (let idx_b = idx_a + 2; idx_b < this.set_size; idx_b++){
                     
-                    let a_1 = this.trips[truck][idx_a];
-                    let a_2 = this.trips[truck][(idx_a+1)%this.set_size];
-                    let a_3 = this.trips[truck][(idx_a+2)%this.set_size];
-                    let b_1 = this.trips[truck][idx_b];
-                    let b_2 = this.trips[truck][(idx_b+1)%this.set_size];
+        //             let a_1 = this.trips[truck][idx_a];
+        //             let a_2 = this.trips[truck][(idx_a+1)%this.set_size];
+        //             let a_3 = this.trips[truck][(idx_a+2)%this.set_size];
+        //             let b_1 = this.trips[truck][idx_b];
+        //             let b_2 = this.trips[truck][(idx_b+1)%this.set_size];
     
-                    let old_dist = this.trip_distance(this.trips[truck]);
+        //             let old_dist = this.trip_distance(this.trips[truck]);
     
-                    if (-100 > best_diff && min_array_dist(idx_b, idx_a, this.set_size) > 2){
-                        best_truck_a = truck;
-                        best_truck_b = truck;
-                        best_diff = removed - added;
-                        best_a_2 = (idx_a+1)%this.set_size;
-                        best_b_2 = (idx_b+1)%this.set_size;
-                        move_type = "intra_2_opt";
+        //             if (-100 > best_diff && min_array_dist(idx_b, idx_a, this.set_size) > 2){
+        //                 best_truck_a = truck;
+        //                 best_truck_b = truck;
+        //                 best_diff = removed - added;
+        //                 best_a_2 = (idx_a+1)%this.set_size;
+        //                 best_b_2 = (idx_b+1)%this.set_size;
+        //                 move_type = "intra_2_opt";
 
-                    }
-                }
-            }
-        }
+        //             }
+        //         }
+        //     }
+        // }
         
         // inter exchange
         for (let truck_a = 0; truck_a < this.num_of_sets; truck_a++){
@@ -139,7 +131,7 @@ class SetsOfPoints{
         let prev = this.total_dist();
         
         if (move_type == "intra_relocate"){
-            this.trips[best_truck_a].move(best_a_2, best_b_2); // move item from a_2 to b_2
+            this.trips[best_truck_a].move(best_a_2, (best_b_2-1+this.set_size)%this.set_size); // move item from a_2 to b_2
         }
         if (move_type == "inter_exchange"){ // swap a_2 and b_2
             let a_2 = this.trips[best_truck_a][best_a_2];
@@ -149,14 +141,16 @@ class SetsOfPoints{
             this.trips[best_truck_b].splice(best_b_2+1, 1);
             this.trips[best_truck_a].splice(best_a_2+1, 1);
         }
+        console.log("DX:", Math.floor(this.total_dist() - prev), "TOTAL:", Math.floor(this.total_dist()), "Expected DX:", Math.floor(-best_diff), best_truck_a, best_truck_b, best_a_2, best_b_2, move_type);
         
         this.trips[best_truck_a] = this.rotateArray(this.trips[best_truck_a]);
         this.trips[best_truck_b] = this.rotateArray(this.trips[best_truck_b]);
-        console.log(Math.floor(this.total_dist() - prev), Math.floor(this.total_dist()), Math.floor(best_diff), best_truck_a, best_truck_b, best_a_2, best_b_2, move_type);
     }
     
     generateTrips(HEIGHT, WIDTH){ // generate n points randomely distributed in the canvas, but dont place them to close to another
         this.trips = [];
+        this.trips.push([]);
+
         for(let i = 0; i < this.num_of_sets; i++){
             this.trips.push([]);
             this.trips[i].push(this.mid_point);
@@ -172,10 +166,11 @@ class SetsOfPoints{
                 this.trips[i].push(p);
             }
         }
+
+        console.log("starting total:", this.total_dist());
     }
 
     rotateArray(array){
-        // console.log(array);
         for (let i = 0; i < array.length; i++){
             if (array[i].equals(this.mid_point)){
                 for (let k = 0; k < i; k++){
@@ -198,7 +193,8 @@ class SetsOfPoints{
     trip_distance(arr){
         let ans = 0;
         for (let i = 0; i < arr.length; i++){
-            ans =+ arr[i].dist(arr[(i+1)%arr.length]);
+            let d = arr[i].dist(arr[(i+1)%arr.length]);
+            ans += d;
         }
         return ans;
     }
