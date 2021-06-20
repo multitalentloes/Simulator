@@ -38,6 +38,7 @@ class SetsOfPoints{
         let best_truck_a = -1;
         let best_truck_b = -1;
         let best_a_2 = -1;
+        let best_b_1 = -1;
         let best_b_2 = -1;
         let move_type = "none";
 
@@ -50,16 +51,18 @@ class SetsOfPoints{
                     let a_3 = this.trips[truck][(idx_a+2)%this.set_size];
                     let b_1 = this.trips[truck][idx_b];
                     let b_2 = this.trips[truck][(idx_b+1)%this.set_size];
+
                     let removed = a_1.dist(a_2) + a_2.dist(a_3) + b_1.dist(b_2);
-    
                     let added = a_2.dist(b_1) + a_2.dist(b_2) + a_1.dist(a_3);
-    
-                    if (removed - added > best_diff && min_array_dist(idx_b, idx_a, this.set_size) > 2){
+                    let candDiff = removed - added;
+                    
+
+                    if (candDiff > best_diff && min_array_dist(idx_b, idx_a, this.set_size) > 2){
                         best_truck_a = truck;
                         best_truck_b = truck;
-                        best_diff = removed - added;
+                        best_diff = candDiff;
                         best_a_2 = (idx_a+1)%this.set_size;
-                        best_b_2 = (idx_b+1)%this.set_size;
+                        best_b_1 = idx_b;
                         move_type = "intra_relocate";
                     }
                 }
@@ -67,30 +70,30 @@ class SetsOfPoints{
         }
 
         // intra 2 opt
-        // for (let truck = 0; truck < this.num_of_sets; truck++){
-        //     for (let idx_a = 0; idx_a < this.set_size; idx_a++){
-        //         for (let idx_b = idx_a + 2; idx_b < this.set_size; idx_b++){
+        for (let truck = 0; truck < this.num_of_sets; truck++){
+            for (let idx_a = 0; idx_a < this.set_size; idx_a++){
+                for (let idx_b = 0; idx_b < this.set_size; idx_b++){
                     
-        //             let a_1 = this.trips[truck][idx_a];
-        //             let a_2 = this.trips[truck][(idx_a+1)%this.set_size];
-        //             let a_3 = this.trips[truck][(idx_a+2)%this.set_size];
-        //             let b_1 = this.trips[truck][idx_b];
-        //             let b_2 = this.trips[truck][(idx_b+1)%this.set_size];
+                    let a_1 = this.trips[truck][idx_a];
+                    let a_2 = this.trips[truck][(idx_a+1)%this.set_size];
+                    let b_1 = this.trips[truck][idx_b];
+                    let b_2 = this.trips[truck][(idx_b+1)%this.set_size];
     
-        //             let old_dist = this.trip_distance(this.trips[truck]);
-    
-        //             if (-100 > best_diff && min_array_dist(idx_b, idx_a, this.set_size) > 2){
-        //                 best_truck_a = truck;
-        //                 best_truck_b = truck;
-        //                 best_diff = removed - added;
-        //                 best_a_2 = (idx_a+1)%this.set_size;
-        //                 best_b_2 = (idx_b+1)%this.set_size;
-        //                 move_type = "intra_2_opt";
+                    let removed = a_1.dist(a_2) + b_1.dist(b_2);
+                    let added = a_1.dist(b_1) + a_2.dist(b_2);
+                    let candDiff = removed - added;
 
-        //             }
-        //         }
-        //     }
-        // }
+                    if (candDiff > best_diff && min_array_dist(idx_b, idx_a, this.set_size) > 1){
+                        best_truck_a = truck;
+                        best_truck_b = truck;
+                        best_diff = candDiff;
+                        best_a_2 = (idx_a+1)%this.set_size;
+                        best_b_1 = idx_b;
+                        move_type = "intra_2_opt";
+                    }
+                }
+            }
+        }
         
         // inter exchange
         for (let truck_a = 0; truck_a < this.num_of_sets; truck_a++){
@@ -108,13 +111,13 @@ class SetsOfPoints{
                         let b_3 = this.trips[truck_b][(idx_b+2)%this.set_size];
                         
                         let removed = a_1.dist(a_2) + a_2.dist(a_3) + b_1.dist(b_2) + b_2.dist(b_3);
-                        
                         let added = b_1.dist(a_2) + a_2.dist(b_3) + a_1.dist(b_2) + b_2.dist(a_3);
+                        let candDiff = removed - added;
                         
-                        if (removed - added > best_diff){ // swap places
+                        if (candDiff > best_diff){ // swap places
                             best_truck_a = truck_a;
                             best_truck_b = truck_b;
-                            best_diff = removed - added;
+                            best_diff = candDiff;
                             best_a_2 = (idx_a+1)%this.set_size;
                             best_b_2 = (idx_b+1)%this.set_size;
                             move_type = "inter_exchange"
@@ -131,7 +134,10 @@ class SetsOfPoints{
         let prev = this.total_dist();
         
         if (move_type == "intra_relocate"){
-            this.trips[best_truck_a].move(best_a_2, (best_b_2-1+this.set_size)%this.set_size); // move item from a_2 to b_2
+            this.trips[best_truck_a].move(best_a_2, best_b_1); // move item from a_2 to b_2
+        }
+        if (move_type == "intra_2_opt"){
+            this.reverseSubArray(best_truck_a, best_a_2, best_b_1);
         }
         if (move_type == "inter_exchange"){ // swap a_2 and b_2
             let a_2 = this.trips[best_truck_a][best_a_2];
@@ -141,7 +147,7 @@ class SetsOfPoints{
             this.trips[best_truck_b].splice(best_b_2+1, 1);
             this.trips[best_truck_a].splice(best_a_2+1, 1);
         }
-        console.log("DX:", Math.floor(this.total_dist() - prev), "TOTAL:", Math.floor(this.total_dist()), "Expected DX:", Math.floor(-best_diff), best_truck_a, best_truck_b, best_a_2, best_b_2, move_type);
+        console.log("DX:", Math.floor(this.total_dist() - prev), "TOTAL:", Math.floor(this.total_dist()), "Expected DX:", Math.floor(-best_diff), move_type);
         
         this.trips[best_truck_a] = this.rotateArray(this.trips[best_truck_a]);
         this.trips[best_truck_b] = this.rotateArray(this.trips[best_truck_b]);
@@ -198,8 +204,29 @@ class SetsOfPoints{
         }
         return ans;
     }
-}
 
+    subTripDistance(truck, from, to){
+        let ans = 0;
+        for(let i = from; i != to; i++){
+            ans += this.trips[truck][i].dist(this.trips[truck][(i+1)%this.set_size]);
+        }
+        return ans;
+    }
+
+    // reverse a subarray by swapping the items 
+    reverseSubArray(truck, start, end){
+        let sub_array_length = (start < end ? end-start : start + (this.set_size-end));
+        for(let i = 0; i <sub_array_length/2; i++){
+            // swap items at location first index with item at location second index
+            let first_idx = (start+i)%this.set_size; 
+            let second_idx = (end-i+this.set_size)%this.set_size;
+
+            let tmp = this.trips[truck][first_idx];
+            this.trips[truck][first_idx] = this.trips[truck][second_idx];
+            this.trips[truck][second_idx] = tmp;
+        }
+    }
+}
 
 function min_array_dist(idxa, idxb, list_size){
     return Math.min(Math.abs(idxa-idxb), list_size-Math.abs(idxa-idxb));
