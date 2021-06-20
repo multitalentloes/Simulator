@@ -101,7 +101,7 @@ class SetsOfPoints{
             for (let truck_b = truck_a + 1; truck_b < this.num_of_sets; truck_b++){
                 for (let idx_a = 1; idx_a < this.set_size; idx_a++){
                     for (let idx_b = 1; idx_b < this.set_size; idx_b++){
-                        for (let interval_length = 1; interval_length <= 6; interval_length++){
+                        for (let interval_length = 1; interval_length <= this.set_size-1; interval_length++){
                             if (idx_b + interval_length >= this.set_size) continue; // dont move the start node
                             if (idx_a + interval_length >= this.set_size) continue; // dont move the start node
     
