@@ -40,6 +40,7 @@ class SetsOfPoints{
         let best_a_2 = -1;
         let best_b_1 = -1;
         let best_b_2 = -1;
+        let best_interval_length = -1;
         let move_type = "none";
 
         // intra relocate
@@ -94,33 +95,39 @@ class SetsOfPoints{
                 }
             }
         }
-        
-        // inter exchange
+
+        // inter cross exchange
         for (let truck_a = 0; truck_a < this.num_of_sets; truck_a++){
             for (let truck_b = truck_a + 1; truck_b < this.num_of_sets; truck_b++){
                 for (let idx_a = 1; idx_a < this.set_size; idx_a++){
-                    for (let idx_b = idx_a + 1; idx_b < this.set_size; idx_b++){
+                    for (let idx_b = 1; idx_b < this.set_size; idx_b++){
+                        for (let interval_length = 1; interval_length <= 6; interval_length++){
+                            if (idx_b + interval_length >= this.set_size) continue; // dont move the start node
+                            if (idx_a + interval_length >= this.set_size) continue; // dont move the start node
+    
+                            let a_1 = this.trips[truck_a][idx_a];
+                            let a_2 = this.trips[truck_a][idx_a+1];
+                            let a_n = this.trips[truck_a][idx_a+interval_length];
+                            let a_n_plus_one = this.trips[truck_a][(idx_a+interval_length+1)%this.set_size];
 
-                        if ((idx_a+1)%this.set_size == 0 || (idx_b+1)%this.set_size == 0) continue; // dont move the start node
-
-                        let a_1 = this.trips[truck_a][idx_a];
-                        let a_2 = this.trips[truck_a][(idx_a+1)%this.set_size];
-                        let a_3 = this.trips[truck_a][(idx_a+2)%this.set_size];
-                        let b_1 = this.trips[truck_b][idx_b];
-                        let b_2 = this.trips[truck_b][(idx_b+1)%this.set_size];
-                        let b_3 = this.trips[truck_b][(idx_b+2)%this.set_size];
-                        
-                        let removed = a_1.dist(a_2) + a_2.dist(a_3) + b_1.dist(b_2) + b_2.dist(b_3);
-                        let added = b_1.dist(a_2) + a_2.dist(b_3) + a_1.dist(b_2) + b_2.dist(a_3);
-                        let candDiff = removed - added;
-                        
-                        if (candDiff > best_diff){ // swap places
-                            best_truck_a = truck_a;
-                            best_truck_b = truck_b;
-                            best_diff = candDiff;
-                            best_a_2 = (idx_a+1)%this.set_size;
-                            best_b_2 = (idx_b+1)%this.set_size;
-                            move_type = "inter_exchange"
+                            let b_1 = this.trips[truck_b][idx_b];
+                            let b_2 = this.trips[truck_b][idx_b+1];
+                            let b_n = this.trips[truck_b][idx_b+interval_length];
+                            let b_n_plus_one = this.trips[truck_b][(idx_b+interval_length+1)%this.set_size];
+                            
+                            let removed = a_1.dist(a_2) + a_n.dist(a_n_plus_one) + b_1.dist(b_2) + b_n.dist(b_n_plus_one);
+                            let added = a_1.dist(b_2) + b_n.dist(a_n_plus_one) + b_1.dist(a_2) + a_n.dist(b_n_plus_one);
+                            let candDiff = removed - added;
+                            
+                            if (candDiff > best_diff){ 
+                                best_truck_a = truck_a;
+                                best_truck_b = truck_b;
+                                best_diff = candDiff;
+                                best_interval_length = interval_length;
+                                best_a_2 = (idx_a+1)%this.set_size;
+                                best_b_2 = (idx_b+1)%this.set_size;
+                                move_type = "inter_cross_exchange"
+                            }
                         }
                     }
                 }
@@ -146,6 +153,12 @@ class SetsOfPoints{
             this.trips[best_truck_a].splice(best_a_2, 0, b_2);
             this.trips[best_truck_b].splice(best_b_2+1, 1);
             this.trips[best_truck_a].splice(best_a_2+1, 1);
+        }
+        if (move_type == "inter_cross_exchange"){
+            let truck_a_nodes = this.trips[best_truck_a].splice(best_a_2, best_interval_length); // fetch the nodes that shall be placed in route b
+            let truck_b_nodes = this.trips[best_truck_b].splice(best_b_2, best_interval_length); // fetch the nodes that shall be placed in route a
+            this.trips[best_truck_a].splice(best_a_2, 0, ...truck_b_nodes); // insert the nodes from route b into a
+            this.trips[best_truck_b].splice(best_b_2, 0, ...truck_a_nodes); // insert the nodes from route a into b
         }
         console.log("DX:", Math.floor(this.total_dist() - prev), "TOTAL:", Math.floor(this.total_dist()), "Expected DX:", Math.floor(-best_diff), move_type);
         
