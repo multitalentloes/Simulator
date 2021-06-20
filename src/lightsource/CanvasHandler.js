@@ -7,7 +7,7 @@ class CanvasHandler{
 
         this.source = new LightSource(900, 500, 15);
         this.polygons = this.createPolygons();
-        this.showRays = true;
+        this.showRays = false; // dont show the rays by default
 
         this.update();
     }

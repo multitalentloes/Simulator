@@ -7,7 +7,7 @@
 ul {
     counter-reset: index;  
     padding: 2rem;
-    max-width: 300px;
+    max-width: 330px;
     display: block;
     margin: auto;
     margin-top: 5rem;
@@ -81,6 +81,10 @@ canvas{
 
 h3.description {
     margin: 4rem auto 1rem;
+    text-align: center;
+}
+
+p.description{
     text-align: center;
 }
 
