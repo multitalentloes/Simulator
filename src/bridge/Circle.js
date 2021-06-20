@@ -6,9 +6,28 @@ class Circle extends Object{
         this.DAMPING = 0.99;    
         this.TYPE = "CIRCLE"; 
 
-        this.calculateForces = this.calculateForces.bind(this);
+        //this.calculateForces = this.calculateForces.bind(this);
     }
 
+    draw(c){
+        c.beginPath();
+        c.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
+        c.stroke();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
     calculateForces(){
         this.force.y += G; // gravitasjonskraft
     }
@@ -17,15 +36,11 @@ class Circle extends Object{
         this.acceleration.x = (this.force.x / this.mass);
         this.acceleration.y = (this.force.y / this.mass);
     }
-
     calculateCollision(vx, vy) {
         this.v.x = vx;
         this.v.y = vy;
     }
+    */
 
-    draw(c){
-        c.beginPath();
-        c.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
-        c.stroke();
-    }
+
 }

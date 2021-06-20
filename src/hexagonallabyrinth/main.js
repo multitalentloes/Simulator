@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(() => CH.update(), 25);
 
     this.getElementById("Kruskal").addEventListener("click", function(e){CH.generateKruskalLabyrinth();})
+    this.getElementById("DFS_lab").addEventListener("click", function(e){CH.generateDFSLabyrinth();})
     this.getElementById("BFS").addEventListener("click", function(e){CH.BFS();})
+    this.getElementById("aStar").addEventListener("click", function(e){CH.AStarMeetInTheMiddle();})
 }, false);
 

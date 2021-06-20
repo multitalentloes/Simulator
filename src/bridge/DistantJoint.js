@@ -1,11 +1,12 @@
+/*
 class DistantJoint extends Object{
     constructor(x, y, is_movable, obj1, obj2, e){
         super(x, y, is_movable)
         this.obj1 = obj1;
         this.obj2 = obj2;
-        this.equilibrium = e-20; // the joint will not exert force if the objects are at this distance from eachother
-        this.ex = e/2;
-        this.ey = e/2;
+        this.equilibrium = e; // the joint will not exert force if the objects are at this distance from eachother
+        //this.ex = e/2;
+        //this.ey = e/2;
         this.EQUILIBRIUM_CONSTANT = 12; 
         this.TYPE = "DISTANT_JOINT";
         this.pos = {
@@ -22,6 +23,14 @@ class DistantJoint extends Object{
 
         this.calculateForces = this.calculateForces.bind(this);
     }
+
+    draw(c){
+        c.beginPath();
+        c.moveTo(this.obj1.pos.x, this.obj1.pos.y);
+        c.lineTo(this.obj2.pos.x, this.obj2.pos.y);
+        c.stroke();
+    }
+
 
     calculateForces(){
         let unitVector = {
@@ -64,11 +73,5 @@ class DistantJoint extends Object{
     DY(){
         return this.obj2.pos.y - this.obj1.pos.y;
     }
-
-    draw(c){
-        c.beginPath();
-        c.moveTo(this.obj1.pos.x, this.obj1.pos.y);
-        c.lineTo(this.obj2.pos.x, this.obj2.pos.y);
-        c.stroke();
-    }
 }
+*/

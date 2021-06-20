@@ -1,44 +1,32 @@
 class Object{
     constructor(x, y, is_movable){
-        this.pos = { // akksesser med this.pos["x"] eller this.pos.x
+
+        this.pos = {
             "x" : x,
             "y" : y
         }
+
         this.v = {
             "x" : 0,
             "y" : 0
         }
-        this.force = {
-            "x" : 0,
-            "y" : 0
-        }   
-        this.acceleration = {
+
+        this.F  = {
             "x" : 0,
             "y" : 0
         }
+
+        this.F_old = {
+            "x" : 0,
+            "y" : 0
+        }
+
         this.is_movable = is_movable;
-
-        this.move = this.move.bind(this);
-        this.resetForces = this.resetForces.bind(this);
     }
 
-    move(){
-        if (this.is_movable){
-            this.v.x += this.acceleration.x;
-            this.v.y += this.acceleration.y;
-            
-            this.pos.x += this.v.x;
-            this.pos.y += this.v.y;
-
-            if (this.DAMPING){
-                this.v.x *= this.DAMPING;
-                this.v.y *= this.DAMPING;
-            }
-        }
-    }
-
-    resetForces(){
-        this.force.x = 0;
-        this.force.y = 0;
+    reset_force() {
+        this.F_old = this.F;
+        this.F.x = 0;
+        this.F.y = 0;
     }
 }
