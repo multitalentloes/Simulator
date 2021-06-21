@@ -5,7 +5,7 @@ class CanvasHandler{
         this.c = document.getElementById("canvas").getContext("2d");
 
         this.bridge_point_mass = 1;
-        this.g = 0.0004;
+        this.g = 0.00088;
         this.k = 0.1;
         this.l = 0.999;
         this.BRIDGE_POINTS = 100;
@@ -45,13 +45,13 @@ class CanvasHandler{
                 let A = this.bridge[j];
                 let B = this.bridge[j+1];
 
-                if ((C.pos.x >= A.pos.x) && (C.pos.x <= B.pos.x)) {
+                if ((C.pos.x - C.radius <= A.pos.x) && (C.pos.x + C.radius >= B.pos.x)) {
                     let a = Math.pow((B.pos.x - A.pos.x) * (A.pos.y - C.pos.y) - (A.pos.x - C.pos.x) * (B.pos.y - A.pos.y), 2);
                     let b = Math.pow(B.pos.x - A.pos.x, 2) + Math.pow(B.pos.y - A.pos.y, 2);
                     let dist_squared = a / b;
 
                     if (dist_squared <= r_squared) {
-                        C.v.y *= -1;
+                        C.v.y *= -1; // eksempel 
                     }
                 }
             }
@@ -60,10 +60,11 @@ class CanvasHandler{
 
     update_circles(dt) {
         for (let i = 0; i < this.circles_n; i++) {
-            this.circles[0].update_pos(dt);
-            this.circles[0].reset_force();
-            this.circles[0].apply_gravity(this.g);
-            this.circles[0].update_vel(dt);
+            this.circles[i].update_pos(dt);
+            this.circles[i].reset_force();
+            this.circles[i].apply_gravity(this.g);
+            this.circles[i].update_vel(dt);
+            this.circles[i].apply_dampening(this.l);
         }
     }
 

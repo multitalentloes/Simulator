@@ -20,9 +20,15 @@ class Circle extends Object{
         this.F.y += this.m * g;
     }
 
+    apply_dampening(l) {
+        this.v.x *= l;
+        this.v.y *= l;
+    }
+
     draw(c){
         c.beginPath();
         c.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
         c.stroke();
     }
+
 }
