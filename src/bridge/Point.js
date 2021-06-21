@@ -29,7 +29,4 @@ class Point extends Object{
         c.arc(this.pos.x, this.pos.y, 3, 0, 2 * Math.PI);
         c.fill();
     }
-
-
-
 }

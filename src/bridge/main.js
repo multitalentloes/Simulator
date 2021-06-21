@@ -15,11 +15,11 @@ function mainLoop(timestamp) {
 	lastFrameTimeMs = timestamp;
 
 	while (delta >= timestep) {
-		CH.update_bridge(timestep);
+		CH.update_all(timestep);
 
 		delta -= timestep;
 	}
-	CH.draw_bridge();
+	CH.draw_all();
 	requestAnimationFrame(mainLoop);
 }
 
