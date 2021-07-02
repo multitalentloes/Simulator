@@ -28,6 +28,7 @@ class Circle extends Object{
     draw(c){
         c.beginPath();
         c.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
+        c.fill();
         c.stroke();
     }
 

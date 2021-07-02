@@ -3,15 +3,16 @@ class CanvasHandler{
         this.WIDTH = 1920;
         this.HEIGHT = 1080;
         this.c = document.getElementById("canvas").getContext("2d");
+        this.c.lineWidth=5;
 
         this.bridge_point_mass = 1;
         this.g = 0.00088;
-        this.k = 0.1;
-        this.l = 0.999;
+        this.k = 0.20;
+        this.l = 0.9999;
         this.BRIDGE_POINTS = 100;
 
         this.bridge = [];
-        let y = 200;
+        let y = 650;
         for(let i = 0; i < this.BRIDGE_POINTS; i++){
             let is_in_middle = (i != 0 && i != this.BRIDGE_POINTS-1);
             
@@ -20,12 +21,12 @@ class CanvasHandler{
         this.bridge_EQ = this.bridge[1].pos.x - this.bridge[0].pos.x;
 
 
-        this.circle_mass = 1;
-        this.circles_n = 1;
+        this.circle_mass = 0.75;
+        this.circles_n = 10;
         this.circles = [];
 
         for (let i = 0; i < this.circles_n; i++) {
-            this.circles.push(new Circle (this.WIDTH /3, 0, true, 20, this.circle_mass))
+            this.circles.push(new Circle (this.WIDTH /2- i, 0, true, 10, this.circle_mass))
         }
     }
 
@@ -84,22 +85,21 @@ class CanvasHandler{
                         "vy" : (A.v.y + B.v.y) / 2,
                         "m" : (A.m + B.m) / 2
                     }
-                    console.log(D);
-                    console.log(C.pos.x);
                     // 1 : D
                     // 2 : C
                     let k = 2 * C.m / (D.m + C.m);
+                    let ip = (D.vx - C.v.x) * (D.x - C.pos.x) + (D.vy - C.v.y) * (D.y - C.pos.y);
                     let k2 = 2 * D.m / (D.m + C.m);
-                    
+                    let ip2 = (C.v.x - D.vx) * (C.pos.x - D.x) + (C.v.y - D.vy) * (C.pos.y - D.y);
                     let c = Math.pow(D.x - C.pos.x, 2) + Math.pow(D.y - C.pos.y, 2);
                     let new_D = {
-                        "vx" : D.vx - k * ((D.vx - C.v.x) * (D.x - C.pos.x)) * (D.x - C.pos.x) / c,
-                        "vy" : D.vy - k * ((D.vy - C.v.y) * (D.y - C.pos.y)) * (D.y - C.pos.y) / c
+                        "vx" : D.vx - k * ip * (D.x - C.pos.x) / c,
+                        "vy" : D.vy - k * ip * (D.y - C.pos.y) / c
                     }
 
                     let new_C = {
-                        "vx" : C.v.x - k2 * ((C.v.x - D.vx) * (C.pos.x - D.x)) * (C.pos.x - D.x) / c,
-                        "vy" : C.v.y - k2 * ((C.v.y - D.vy) * (C.pos.y - D.y)) * (C.pos.y - D.y) / c,
+                        "vx" : C.v.x - k2 * ip2 * (C.pos.x - D.x) / c,
+                        "vy" : C.v.y - k2 * ip2 * (C.pos.y - D.y) / c,
                     }
 
                     let C_dp = {
@@ -111,30 +111,33 @@ class CanvasHandler{
                         "x" : new_D.vx - D.vx,
                         "y" : new_D.vy - D.vy
                     }
+                    C.F.x += C_dp.x / dt;
+                    C.F.y += C_dp.y / dt;
 
-                    /*
-                    C.F.x += 5*C_dp.x / dt;
-                    C.F.y += 5*C_dp.y / dt;
-                    */
-
-                    //
-                    A.F.x += D_dp.x / (dt*2);
-                    A.F.y += D_dp.x / (dt*2);
-
-                    B.F.x += D_dp.x / (dt*2);
-                    B.F.y += D_dp.y / (dt*2);
-                    //
-
-
-                    /* 
-                    if (C.v.y > 0) {
-                            C.v.y *= -1; 
-                            this.resolve_circle_bridge_collision(A, B, C);
+                    if (j != 0) { 
+                        A.F.x += D_dp.x / (dt*2);
+                        A.F.y += D_dp.x / (dt*2);
                     }
-                    */
+
+                    if (j + 1 != this.BRIDGE_POINTS - 1) {
+                        B.F.x += D_dp.x / (dt*2);
+                        B.F.y += D_dp.y / (dt*2);
+                    }
                 }
             }
         }
+
+        /*
+
+        for (let i = 0; i < this.circles_n; i++) {
+            if (this.circles[i].pos.x >= this.WIDTH) {
+                this.circles[i].v.x *= -1;
+            }
+            if (this.circles[i].pos.x <= 0) {
+                this.circles[i].v.x *= -1;
+            }
+        }
+        */
     }
 
 
@@ -149,7 +152,6 @@ class CanvasHandler{
     update_circles_2(dt) {
         for (let i = 0; i < this.circles_n; i++) {
             this.circles[i].update_vel(dt);
-            this.circles[i].apply_dampening(this.l);
         }
     }
 
