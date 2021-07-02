@@ -23,13 +23,22 @@ class CanvasHandler{
         this.circle_mass = 1;
         this.circles_n = 1;
         this.circles = [];
-        this.circles.push(new Circle (this.WIDTH/2, 5, true, 50, this.circle_mass))
+
+        for (let i = 0; i < this.circles_n; i++) {
+            this.circles.push(new Circle (this.WIDTH /3, 0, true, 20, this.circle_mass))
+        }
     }
 
     update_all(dt) {
-        this.update_bridge(dt);
-        this.update_circles(dt);
-        this.circle_bridge_collision();
+
+        // pos and forces
+        this.update_bridge_1(dt);
+        this.update_circles_1(dt);
+        this.circle_bridge_collision(dt);
+
+        // vel-update
+        this.update_bridge_2(dt);
+        this.update_circles_2(dt);
     }
 
     draw_all() {
@@ -37,7 +46,7 @@ class CanvasHandler{
         this.draw_circles();
     }
 
-    circle_bridge_collision() {
+    circle_bridge_collision(dt) {
         for (let i = 0; i < this.circles_n; i++) {
             let C = this.circles[i]; 
             let r_squared = C.radius * C.radius;
@@ -45,24 +54,100 @@ class CanvasHandler{
                 let A = this.bridge[j];
                 let B = this.bridge[j+1];
 
-                if ((C.pos.x - C.radius <= A.pos.x) && (C.pos.x + C.radius >= B.pos.x)) {
-                    let a = Math.pow((B.pos.x - A.pos.x) * (A.pos.y - C.pos.y) - (A.pos.x - C.pos.x) * (B.pos.y - A.pos.y), 2);
-                    let b = Math.pow(B.pos.x - A.pos.x, 2) + Math.pow(B.pos.y - A.pos.y, 2);
-                    let dist_squared = a / b;
+                let AB = {
+                    "x" : B.pos.x - A.pos.x,
+                    "y" : B.pos.y - A.pos.y
+                }
 
-                    if (dist_squared <= r_squared) {
-                        C.v.y *= -1; // eksempel 
+                let AC = {
+                    "x" : C.pos.x - A.pos.x,
+                    "y" : C.pos.y - A.pos.y
+                }
+
+                let projection_factor = (AB.x * AC.x + AB.y * AC.y) / (AC.x * AC.x + AC.y * AC.y);
+
+                let AD = {
+                    "x" : projection_factor * AC.x,
+                    "y" : projection_factor * AC.y
+                }
+                
+                let CD = {
+                    "x" : AD.x - AC.x,
+                    "y" : AD.y - AC.y
+                }
+
+                if (CD.x * CD.x + CD.y * CD.y <= r_squared) {
+                    let D = {
+                        "x" : (A.pos.x + B.pos.x) / 2,
+                        "y" : (A.pos.y + B.pos.y) / 2,
+                        "vx" : (A.v.x + B.v.x) / 2,
+                        "vy" : (A.v.y + B.v.y) / 2,
+                        "m" : (A.m + B.m) / 2
                     }
+                    console.log(D);
+                    console.log(C.pos.x);
+                    // 1 : D
+                    // 2 : C
+                    let k = 2 * C.m / (D.m + C.m);
+                    let k2 = 2 * D.m / (D.m + C.m);
+                    
+                    let c = Math.pow(D.x - C.pos.x, 2) + Math.pow(D.y - C.pos.y, 2);
+                    let new_D = {
+                        "vx" : D.vx - k * ((D.vx - C.v.x) * (D.x - C.pos.x)) * (D.x - C.pos.x) / c,
+                        "vy" : D.vy - k * ((D.vy - C.v.y) * (D.y - C.pos.y)) * (D.y - C.pos.y) / c
+                    }
+
+                    let new_C = {
+                        "vx" : C.v.x - k2 * ((C.v.x - D.vx) * (C.pos.x - D.x)) * (C.pos.x - D.x) / c,
+                        "vy" : C.v.y - k2 * ((C.v.y - D.vy) * (C.pos.y - D.y)) * (C.pos.y - D.y) / c,
+                    }
+
+                    let C_dp = {
+                        "x" : new_C.vx - C.v.x,
+                        "y" : new_C.vy - C.v.y
+                    }
+
+                    let D_dp = {
+                        "x" : new_D.vx - D.vx,
+                        "y" : new_D.vy - D.vy
+                    }
+
+                    /*
+                    C.F.x += 5*C_dp.x / dt;
+                    C.F.y += 5*C_dp.y / dt;
+                    */
+
+                    //
+                    A.F.x += D_dp.x / (dt*2);
+                    A.F.y += D_dp.x / (dt*2);
+
+                    B.F.x += D_dp.x / (dt*2);
+                    B.F.y += D_dp.y / (dt*2);
+                    //
+
+
+                    /* 
+                    if (C.v.y > 0) {
+                            C.v.y *= -1; 
+                            this.resolve_circle_bridge_collision(A, B, C);
+                    }
+                    */
                 }
             }
         }
     }
 
-    update_circles(dt) {
+
+    update_circles_1(dt) {
         for (let i = 0; i < this.circles_n; i++) {
             this.circles[i].update_pos(dt);
             this.circles[i].reset_force();
             this.circles[i].apply_gravity(this.g);
+        }
+    }
+
+    update_circles_2(dt) {
+        for (let i = 0; i < this.circles_n; i++) {
             this.circles[i].update_vel(dt);
             this.circles[i].apply_dampening(this.l);
         }
@@ -74,8 +159,15 @@ class CanvasHandler{
         }
     }
 
+    update_bridge_2(dt) {
+        for (let i = 0; i < this.BRIDGE_POINTS; i++) {
+            this.bridge[i].update_vel(dt);
+            this.bridge[i].apply_dampening(this.l);
+        }
+    }
+
     //bridge:
-    update_bridge(dt) {
+    update_bridge_1(dt) {
         this.bridge[0].update_pos(dt);
 
         for (let i = 1; i < this.BRIDGE_POINTS; i++) {
@@ -83,13 +175,8 @@ class CanvasHandler{
             this.bridge[i].reset_force();
             this.apply_bridge_forces(this.bridge[i-1], this.bridge[i]);
             this.bridge[i].apply_gravity(this.g)
-            this.bridge[i-1].update_vel(dt);
-            this.bridge[i-1].apply_dampening(this.l);
         }
-
         this.bridge[this.BRIDGE_POINTS - 1].reset_force();
-        this.apply_bridge_forces(this.bridge[this.BRIDGE_POINTS - 2], this.bridge[this.BRIDGE_POINTS - 1]);
-        this.bridge[this.BRIDGE_POINTS - 1].update_vel(dt);
     }
 
     apply_bridge_forces(p1, p2) {    
