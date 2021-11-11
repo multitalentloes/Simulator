@@ -5,19 +5,23 @@ class CanvasHandler{
 
         this.cursor_radius = 100
 
-        this.grid = this.initiate_grid(400, 400);
+        this.grid = this.initiate_grid(500, 500);
 
         this.c = document.getElementById("topographicalmap_canvas").getContext("2d");
     }
 
     // position of where the mouse it trying to raise the elevation
     update(increase_pos){
-        this.c.clearRect(0, 0, this.WIDTH, this.HEIGHT);
         if (increase_pos){
             this.grid.updateHeights(increase_pos, this.cursor_radius);
+            let fromx = increase_pos.x - this.cursor_radius;
+            let fromy = increase_pos.y - this.cursor_radius;
+            let rad2 = this.cursor_radius*2;
+
+            this.c.clearRect(fromx, fromy, rad2, rad2);
+            this.grid.marchingSquares(fromx, fromy, fromx+rad2, fromy+rad2);
+            this.grid.draw(this.c);
         }
-        this.grid.marchingSquares();
-        this.grid.draw(this.c);
     }
 
     initiate_grid(xpoints, ypoints){ // generate n points randomely distributed in the canvas, but dont place them to close to another

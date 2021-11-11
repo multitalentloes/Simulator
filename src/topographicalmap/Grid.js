@@ -8,7 +8,7 @@ class Grid{
         this.lines;
 
         this.contour_heights = []; // TODO: create logic to just look for each 10 up the max grid point value
-        for (let i = 10; i < 150; i += 10){
+        for (let i = 10; i < 180; i += 10){
             this.contour_heights.push(i);
         }
 
@@ -49,10 +49,17 @@ class Grid{
     }
 
     //algorithm for drawing contour lines on the topographic map
-    marchingSquares(){
+    marchingSquares(fromx, fromy, tox, toy){
         this.lines = [];
-        for (let i = 1; i <= this.xdim; i++){
-            for (let j = 1; j < this.ydim; j++){
+        let square_width = this.canvasx/(this.xdim); // might be off by one
+        let square_height = this.canvasy/(this.ydim); // might be off by one
+        let j_start = Math.max(1, Math.floor(fromx/square_width)-5);
+        let i_start = Math.max(1, Math.floor(fromy/square_height)-5);
+        let j_end = Math.min(this.xdim, Math.ceil(tox/square_width)+5);
+        let i_end = Math.min(this.ydim, Math.ceil(toy/square_height)+5);
+
+        for (let i = i_start; i <= i_end; i++){
+            for (let j = j_start; j <= j_end; j++){
                 for (let contour of this.contour_heights){
                     let ul = this.grid[j-1][i-1].value > contour; // upper left
                     let ll = this.grid[j][i-1].value > contour; // lower left
@@ -117,7 +124,7 @@ class Grid{
 
     getPointBetween(pta, ptb, contour){
         let mid = new Point((pta.pos.x + ptb.pos.x)/2, (pta.pos.y + ptb.pos.y)/2, 0, (pta.value + ptb.value)/2);
-        for (let i = 0; i < 4; i++){
+        for (let i = 0; i < 8; i++){
             if (pta.value > contour == mid.value > contour){ // the correct point is between mid and ptb, move pta to mid and repeat
                 pta = new Point(mid.pos.x, mid.pos.y, 0, mid.value);
                 mid = new Point((pta.pos.x + ptb.pos.x)/2, (pta.pos.y + ptb.pos.y)/2, 0, (pta.value + ptb.value)/2);
