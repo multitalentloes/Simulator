@@ -5,7 +5,7 @@ class CanvasHandler{
 
         this.cursor_radius = 100
 
-        this.grid = this.initiate_grid(200, 200);
+        this.grid = this.initiate_grid(400, 400);
 
         this.c = document.getElementById("topographicalmap_canvas").getContext("2d");
     }
