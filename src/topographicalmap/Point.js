@@ -25,10 +25,10 @@ class Point{
         return Math.sqrt(DX*DX + DY*DY);
     }
 
-    cursor_dist(pos){
+    cursor_dist_sqr(pos){
         let DX = this.pos.x-pos.x;
         let DY = this.pos.y-pos.y;
-        return Math.sqrt(DX*DX + DY*DY);
+        return DX*DX + DY*DY;
     }
 
     equals(b){

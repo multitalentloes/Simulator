@@ -19,22 +19,18 @@ class Grid{
     }
 
     draw(c){
-        // for (let row of this.grid){
-        //     for (let point of row){
-        //         point.draw(c);
-        //     }
-        // }
-
         for (let line of this.lines){
             line.draw(c);
         }
     }
 
     updateHeights(increase_pos, cursor_radius){
+        let cursor_radius_sqr = cursor_radius*cursor_radius;
         for (let i = 0; i < this.ydim; i++){
             for (let j = 0; j < this.xdim; j++){
-                if (this.grid[i][j].cursor_dist(increase_pos) <= cursor_radius){
-                    this.grid[i][j].value += 4 - 4*this.grid[i][j].cursor_dist(increase_pos)/cursor_radius;
+                let dist_sqr = this.grid[i][j].cursor_dist_sqr(increase_pos)
+                if (dist_sqr <= cursor_radius_sqr){
+                    this.grid[i][j].value += 4 - 4*dist_sqr/cursor_radius_sqr;
                 }
             }
         }
@@ -121,12 +117,12 @@ class Grid{
 
     getPointBetween(pta, ptb, contour){
         let mid = new Point((pta.pos.x + ptb.pos.x)/2, (pta.pos.y + ptb.pos.y)/2, 0, (pta.value + ptb.value)/2);
-        for (let i = 0; i < 5; i++){ // 6 iterations in the binary search... this does not make sense in a discretized setting
+        for (let i = 0; i < 4; i++){
             if (pta.value > contour == mid.value > contour){ // the correct point is between mid and ptb, move pta to mid and repeat
                 pta = new Point(mid.pos.x, mid.pos.y, 0, mid.value);
                 mid = new Point((pta.pos.x + ptb.pos.x)/2, (pta.pos.y + ptb.pos.y)/2, 0, (pta.value + ptb.value)/2);
             }
-            else{
+            else{ // the correct point is between mid and pta, move ptb to mid and adjust mid
                 ptb = new Point(mid.pos.x, mid.pos.y, 0, mid.value);
                 mid = new Point((ptb.pos.x + pta.pos.x)/2, (ptb.pos.y + pta.pos.y)/2, 0, (pta.value + ptb.value)/2);
             }
@@ -134,3 +130,5 @@ class Grid{
         return mid;
     }
 }
+
+//TODO only update the changed squares. This should work since all changes happens within a square, just tell it to redraw a small square that the cursor fits within
