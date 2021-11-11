@@ -7,8 +7,12 @@ class Grid{
         this.grid;
         this.lines;
 
-        this.contour_heights = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]; // TODO: create logic to just look for each 10 up the max grid point value
-        
+        this.contour_heights = []; // TODO: create logic to just look for each 10 up the max grid point value
+        for (let i = 10; i < 150; i += 10){
+            this.contour_heights.push(i);
+        }
+
+
         this.createGridPoints();
 
         this.draw = this.draw.bind(this);
@@ -117,7 +121,7 @@ class Grid{
 
     getPointBetween(pta, ptb, contour){
         let mid = new Point((pta.pos.x + ptb.pos.x)/2, (pta.pos.y + ptb.pos.y)/2, 0, (pta.value + ptb.value)/2);
-        for (let i = 0; i < 0; i++){ // 6 iterations in the binary search... this does not make sense in a discretized setting
+        for (let i = 0; i < 5; i++){ // 6 iterations in the binary search... this does not make sense in a discretized setting
             if (pta.value > contour == mid.value > contour){ // the correct point is between mid and ptb, move pta to mid and repeat
                 pta = new Point(mid.pos.x, mid.pos.y, 0, mid.value);
                 mid = new Point((pta.pos.x + ptb.pos.x)/2, (pta.pos.y + ptb.pos.y)/2, 0, (pta.value + ptb.value)/2);
