@@ -3,22 +3,59 @@ class SuffixTree{
         this.s = s + "$";
         this.cur_str_len = 0;
         this.nodes = []
+        this.tree_height = -1;
 
         this.currNode = -1;
         this.gamma = []
 
         this.ukkonen();
         this.update_label_length(0);
-        console.log(this.nodes);
+        this.update_tree_height();
+        this.height_cnt = [];
+
+        for (let i = 0; i < this.tree_height; i++){
+            this.height_cnt.push(0);
+        }
+
+        this.set_node_positions(0, 0);
     }
     
     draw(c, node){
         if (node >= this.nodes.length){
             return;
         }
-        this.nodes[node].draw(c);
+        let posA = this.nodes[node].pos;
         for (let child in this.nodes[node].children){
+            let posB = this.nodes[this.nodes[node].children[child]].pos;
+
+            c.lineWidth = 5;
+            c.beginPath();
+            c.moveTo(posA.x, posA.y);
+            c.lineTo(posB.x, posB.y);
+            c.stroke();
             this.draw(c, this.nodes[node].children[child]);
+        }
+        this.nodes[node].draw(c);
+    }  
+
+    set_node_positions(node, depth){
+        this.nodes[node].pos.y = 50 + 100*depth;
+        this.nodes[node].pos.x = 50 + 100*this.height_cnt[depth];
+        this.height_cnt[depth]++;
+        for (let child in this.nodes[node].children){
+            this.set_node_positions(this.nodes[node].children[child], depth+1);
+        }
+    }
+
+    update_tree_height(){
+        this.tree_height = 0;
+        this.update_tree_height_dfs(0, 1)
+    }
+
+    update_tree_height_dfs(node, depth){
+        this.tree_height = Math.max(depth, this.tree_height);
+        for (let key in this.nodes[node].children){
+            this.update_tree_height_dfs(this.nodes[node].children[key], depth+1);
         }
     }
 
@@ -52,8 +89,8 @@ class SuffixTree{
     }
 
     ukkonen(){
-        this.nodes.push(new Node(200, 300+this.nodes.length*50)); // root
-        this.nodes.push(new Node(200, 300+this.nodes.length*50));
+        this.nodes.push(new Node()); // root
+        this.nodes.push(new Node());
         this.nodes[1].parent = 0;
         this.nodes[1].label_length = 1;
         this.nodes[1].parent_edge = [0, this.s.length-1];
@@ -94,15 +131,15 @@ class SuffixTree{
                             // create new internal node and split edge
                             let gamma_length = this.gamma[1] - this.gamma[0];
     
-                            this.nodes.push(new Node(200, 300+this.nodes.length*50)); // create the new internal node
+                            this.nodes.push(new Node()); // create the new internal node
                             let internal = this.nodes.length - 1;
                             this.nodes[internal].parent = this.currNode;
-                            this.nodes[internal].parent_edge = [this.nodes[child].parent_edge[0], this.nodes[child].parent_edge[0] + gamma_length];
+                            this.nodes[internal].parent_edge = [this.nodes[child].parent_edge[0], this.nodes[child].parent_edge[0] + gamma_length - 1];
                             this.nodes[internal].label_length = this.nodes[this.currNode].label_length + gamma_length;
     
                             let internal_edge_length = this.nodes[internal].parent_edge[1] - this.nodes[child].parent_edge[0] + 1;
     
-                            this.nodes.push(new Node(200, 300+this.nodes.length*50)); // create the new leaf node
+                            this.nodes.push(new Node()); // create the new leaf node
                             let leaf = this.nodes.length - 1;
                             this.nodes[leaf].parent = internal;
                             this.nodes[leaf].parent_edge = [this.gamma[0] + internal_edge_length, this.s.length-1];
@@ -120,9 +157,6 @@ class SuffixTree{
                             if (j == 1 + suffix_link_iteration_set) {
                                 this.nodes[suffix_link_start].suffix_link = internal;
                             }
-
-                            console.log(JSON.parse(JSON.stringify(this.nodes[leaf])))
-                            console.log(JSON.parse(JSON.stringify(this.nodes[internal])))
     
                             suffix_link_start = internal;
                             suffix_link_iteration_set = j;
@@ -137,7 +171,7 @@ class SuffixTree{
                     }
                 }
                 else{ // rule 2.5, add new leaf node, but no internal node
-                    this.nodes.push(new Node(200, 300+this.nodes.length*50));
+                    this.nodes.push(new Node());
                     let nodeidx = this.nodes.length-1;
                     this.nodes[nodeidx].parent = this.currNode;
                     this.nodes[nodeidx].parent_edge = [this.cur_str_len, this.s.length-1];
@@ -151,7 +185,7 @@ class SuffixTree{
                 if (extension_rule_used == 3) break;
             }
             j_i = j;
-            console.log(JSON.parse(JSON.stringify(this.nodes)));
+            // console.log(JSON.parse(JSON.stringify(this.nodes)));
         }
     }
 }

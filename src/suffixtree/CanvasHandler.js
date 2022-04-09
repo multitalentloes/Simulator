@@ -7,7 +7,9 @@ class CanvasHandler{
     }
 
     // position of where the mouse it trying to raise the elevation
-    update(){
+    update_tree(str){
+        this.c.clearRect(0, 0, this.WIDTH, this.HEIGHT);
+        this.sufTree = new SuffixTree(str);
         this.sufTree.draw(this.c, 0)
     }
 }

@@ -1,6 +1,9 @@
 let CH = null;
 document.addEventListener('DOMContentLoaded', function() {
 	CH = new CanvasHandler();
-    setInterval(() => CH.update(), 50);
+    this.getElementById("suff_button").addEventListener("click", function(e){
+        let str = document.getElementById("suff_string").value;
+        CH.update_tree(str);
+    })
 }, false);
 

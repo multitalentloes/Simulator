@@ -1,8 +1,8 @@
 class Node{
-    constructor(x, y, draw_color="#333333"){
+    constructor(draw_color="#333333"){
         this.pos = {
-            "x" : x,
-            "y" : y
+            "x" : 0,
+            "y" : 0
         }
         this.parent = -1;
         this.parent_edge = [-1, -1]; // stores where in the string the edge leading here is stored
