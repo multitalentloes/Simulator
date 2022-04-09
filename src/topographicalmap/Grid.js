@@ -49,6 +49,7 @@ class Grid{
     }
 
     //algorithm for drawing contour lines on the topographic map
+    // feed in a rectangle we should update with new lines, no point in going over the entire grid
     marchingSquares(fromx, fromy, tox, toy){
         this.lines = [];
         let square_width = this.canvasx/(this.xdim); // might be off by one
