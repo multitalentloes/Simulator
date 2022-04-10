@@ -1,5 +1,7 @@
 class SuffixTree{
     constructor(s){
+        this.WIDTH = 1920;
+        this.HEIGHT = 1080;
         this.s = s + "$";
         this.cur_str_len = 0;
         this.nodes = []
@@ -17,33 +19,64 @@ class SuffixTree{
             this.height_cnt.push(0);
         }
 
-        this.set_node_positions(0, 0);
+        this.set_node_positions(0, 0, 0, this.WIDTH);
+
+        console.log(this.nodes);
     }
     
     draw(c, node){
         if (node >= this.nodes.length){
             return;
         }
-        let posA = this.nodes[node].pos;
-        for (let child in this.nodes[node].children){
-            let posB = this.nodes[this.nodes[node].children[child]].pos;
 
+        c.fillStyle = "black";
+        let posA = this.nodes[node].pos;
+        let num_of_children = Object.keys(this.nodes[node].children).length;
+        let cnt =0;
+        
+        for (let child in this.nodes[node].children){
+            let child_node = this.nodes[this.nodes[node].children[child]];
+            let posB = child_node.pos;
+            
             c.lineWidth = 5;
             c.beginPath();
             c.moveTo(posA.x, posA.y);
             c.lineTo(posB.x, posB.y);
             c.stroke();
             this.draw(c, this.nodes[node].children[child]);
+
+            
+            // add edge labels
+            let chars_on_edge = child_node.parent_edge[1] - child_node.parent_edge[0] + 1;
+            let vec = {
+                "x" : (posB.x - posA.x)/(chars_on_edge+1),
+                "y" : (posB.y - posA.y)/(chars_on_edge+1)
+            }
+            c.lineWidth = 2;
+            c.font = "50px Arial";
+            for (let i = 0; i < chars_on_edge; i++){
+                c.fillStyle = "white";
+                c.fillText(this.s[child_node.parent_edge[0]+i], posA.x + vec.x*(i+1)+(cnt == 0 ? -2.5 : 1)*10, posA.y + vec.y*(i+1));
+                c.strokeText(this.s[child_node.parent_edge[0]+i], posA.x + vec.x*(i+1)+(cnt == 0 ? -2.5 : 1)*10, posA.y + vec.y*(i+1));
+            }
+            cnt++;
         }
-        this.nodes[node].draw(c);
+        this.nodes[node].draw(c, node);
     }  
 
-    set_node_positions(node, depth){
-        this.nodes[node].pos.y = 50 + 100*depth;
-        this.nodes[node].pos.x = 50 + 100*this.height_cnt[depth];
+    set_node_positions(node, depth, xmin, xmax){
+        this.nodes[node].pos.y = this.HEIGHT * (depth/this.tree_height) + this.HEIGHT/(this.tree_height*2);
+        this.nodes[node].pos.x = (xmin + xmax)/2;
         this.height_cnt[depth]++;
+        let total = Object.keys(this.nodes[node].children).length
+        if (total == 0){
+            return;
+        }
+        let i = 0;
+        let slice_width = (xmax-xmin)/total;
         for (let child in this.nodes[node].children){
-            this.set_node_positions(this.nodes[node].children[child], depth+1);
+            this.set_node_positions(this.nodes[node].children[child], depth+1, xmin + i*slice_width, xmin + (i + 1)*slice_width);
+            i++;
         }
     }
 
@@ -134,6 +167,11 @@ class SuffixTree{
                             this.nodes.push(new Node()); // create the new internal node
                             let internal = this.nodes.length - 1;
                             this.nodes[internal].parent = this.currNode;
+
+                            if (internal == 8){
+                                console.log([this.nodes[child].parent_edge[0], this.nodes[child].parent_edge[0] + gamma_length - 1])
+                            }
+
                             this.nodes[internal].parent_edge = [this.nodes[child].parent_edge[0], this.nodes[child].parent_edge[0] + gamma_length - 1];
                             this.nodes[internal].label_length = this.nodes[this.currNode].label_length + gamma_length;
     
@@ -146,6 +184,7 @@ class SuffixTree{
                             this.nodes[leaf].label_length = this.nodes[internal].label_length + 1;
     
                             this.nodes[child].parent_edge[0] += internal_edge_length
+                            // this.nodes[child].parent_edge[1] = Math.max(this.nodes[child].parent_edge[0], this.nodes[child].parent_edge[1]);
     
                             this.nodes[this.currNode].children[this.s[this.nodes[internal].parent_edge[0]]] = internal;
     
