@@ -2,7 +2,7 @@ class CanvasHandler{
     constructor(){
         this.WIDTH  = 1920;
         this.HEIGHT = 1080;
-        this.sufTree = new SuffixTree("bananaman");
+        this.sufTree = null;
         this.c = document.getElementById("suffix_canvas").getContext("2d");
     }
 

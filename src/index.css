@@ -235,3 +235,12 @@ button.loneTopButton {
 /*
     TRAVELLING SALESMAN ------------------------------------------------
 */
+
+/*
+    SUFFIX TREE ------------------------------------------------
+*/
+
+#suffix_input_container{
+    width: 25%;
+    margin: auto;
+}

@@ -13,9 +13,11 @@
     <body>
         <h3 class="description"> Suffix Tree Builder (ukkonens construction algorithm)</h3>
         <p class="description"> Input a string to see its suffix tree ($ is reserved for termination symbol)</p> 
-        <label for="suff_string">Enter a string</label>
-        <input type="text" id="suff_string" name="suff_string">
-        <button id="suff_button">Show suffix tree</button>
+        <div id="suffix_input_container">
+            <label for="suff_string">Enter a string</label>
+            <input type="text" id="suff_string" name="suff_string">
+            <button id="suff_button">Show suffix tree</button>
+        </div>
         <canvas id="suffix_canvas" width=1920 height=1080></canvas>
     </body>
 </html>
