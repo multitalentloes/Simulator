@@ -27,14 +27,18 @@ class Grid{
     }
 
     set_to_one(x, y){
-        this.grid[this.getidx(1, x, y, this.w, this.h)] += 0.1;
+        this.grid[this.getidx(1, x, y, this.w, this.h)] += 0.25;
+        this.grid[this.getidx(1, (x+1)%this.w, y, this.w, this.h)] += 0.1;
+        this.grid[this.getidx(1, x, (y+1)%this.h, this.w, this.h)] += 0.1;
+        this.grid[this.getidx(1, (x-1+this.w)%this.w, y, this.w, this.h)] += 0.1;
+        this.grid[this.getidx(1, x, (y-1+this.h)%this.h, this.w, this.h)] += 0.1;
     }
 
     display(cnv){
         for (let x = 0; x < this.w; x++){
             for (let y = 0; y < this.h; y++){
-                let val = (this.grid[this.getidx(this.iteration%3, x, y, this.w, this.h)] + 1)/2;
-                val = val*255;
+                let val = (this.grid[this.getidx(this.iteration%3, x, y, this.w, this.h)] + 1/2)/2;
+                val = val*400;
                 val = Math.min(val, 255);
                 val = Math.floor(Math.max(val, 0));
                 val = String(val);
