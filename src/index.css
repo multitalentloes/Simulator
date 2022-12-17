@@ -5,14 +5,15 @@
 */
 
 ul {
+    width: 100%;
     counter-reset: index;  
     padding: 2rem;
     max-width: 330px;
-    display: block;
     margin: auto;
-    margin-top: 5rem;
+    margin-top: 2rem;
     border: 1px solid gray;
     border-radius: 10px;
+    display: inline-block;
 }
 
 li {
@@ -59,6 +60,17 @@ a:link {
 
 #title {
     text-align: center;
+}
+
+.horizontal_list {
+    width: 60%;
+    margin: auto;
+    display: flex
+}
+
+h1 {
+    text-align: center;
+    margin-top: 3rem;
 }
 
 
