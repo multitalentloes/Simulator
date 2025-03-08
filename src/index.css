@@ -4,76 +4,43 @@
     ####################################################################
 */
 
-ul {
-    width: 100%;
-    counter-reset: index;  
-    padding: 2rem;
-    max-width: 330px;
+.horizontal_list {
+    width: 50%;
     margin: auto;
-    margin-top: 2rem;
-    border: 1px solid gray;
-    border-radius: 10px;
-    display: inline-block;
-}
-
-li {
-    counter-increment: index; 
     display: flex;
-    align-items: center;
-    padding: 12px 0;
-    box-sizing: border-box;
-    font-weight: bold;
-}
-  
-  
-/* Element counter */
-li::before {
-    content: counters(index, ".", decimal-leading-zero);
-    font-size: 1.5rem;
-    text-align: right;
-    font-weight: bold;
-    min-width: 50px;
-    padding-right: 12px;
-    font-variant-numeric: tabular-nums;
-    align-self: flex-start;
-    background-attachment: fixed;
 }
 
-a:hover {
+ul.front_page_list {
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #F7F7F7;
+    border-radius: 10px;
+    border: 2px solid darkslategrey;
+}
+
+li.front_page_list_item {
+    display: block;
+    padding: 1rem;
+    text-align: left;
+    font-size: large;
+}
+
+li.front_page_list_item:hover {
+    background-color: #E7E7E7;
+    border-color: darkslategray;
+    border-width: 2px;
+}
+
+a {
+    text-decoration: none;
     text-decoration: underline;
     color: black;
 }
 
 a:visited {
     color: black;
-    text-decoration: none;
+    text-decoration: underline;
 }
-
-a {
-    text-decoration: none;
-}
-
-a:link {
-    text-decoration: none;
-    color: black;
-}
-
-#title {
-    text-align: center;
-}
-
-.horizontal_list {
-    width: 60%;
-    margin: auto;
-    display: flex
-}
-
-h1 {
-    text-align: center;
-    margin-top: 3rem;
-}
-
-
 
 /*
     ####################################################################
@@ -81,7 +48,7 @@ h1 {
     ####################################################################
 */
 
-canvas{
+canvas {
     width: 64rem;
     height: 36rem;
     margin: 2rem auto;
@@ -96,7 +63,7 @@ h3.description {
     text-align: center;
 }
 
-p.description{
+p.description {
     text-align: center;
 }
 
@@ -105,7 +72,51 @@ button.loneTopButton {
     margin: 2rem auto;
 }
 
+nav {
+    background-color: #F7F7F7;
+}
 
+.nav_outer_list {
+    font-size: large;
+    list-style-type: none;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.nav_outer_list_item {
+    position: relative;
+    margin: 10px 0rem;
+    padding: 0 6rem;
+}
+
+.nav_inner_list {
+    list-style-type: none;
+    border: 1px solid gray;
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    display: none;
+    padding: 0;
+    margin: 0;
+    background-color: white;
+    width: 100%;
+}
+
+.nav_inner_list_item {
+    border: 1px solid gray;
+    padding: 0.5rem;
+}
+
+.nav_inner_list_item:hover {
+    background-color: #E7E7E7;
+    transition: background-color 0.4s ease;
+    border-color: darkslategray;
+    border-width: 2px;
+}
 
 /*
     ####################################################################
@@ -126,30 +137,30 @@ button.loneTopButton {
     CONVEXHULL ---------------------------------------------------------
 */
 
-#convexhull_menu{
+#convexhull_menu {
     display: block;
     margin: 2rem auto;
     width: 30%;
 }
 
-#convexhull_buttonContainer1{
+#convexhull_buttonContainer1 {
     display: inline-block;
     width: 32%;
 }
 
-#convexhull_buttonContainer2{
+#convexhull_buttonContainer2 {
     display: inline-block;
     width: 32%;
     border-right: 1px solid gray;
     border-left: 1px solid gray;
 }
 
-#convexhull_buttonContainer3{
+#convexhull_buttonContainer3 {
     display: inline-block;
     width: 32%;
 }
 
-#convexhull_pauseButton{
+#convexhull_pauseButton {
     display: block;
     margin: auto;
     padding: 5px;
@@ -166,7 +177,7 @@ button.loneTopButton {
     outline: none;
 }
 
-#convexhull_restartButton{
+#convexhull_restartButton {
     display: block;
     margin: auto;
     padding: 5px;
@@ -208,11 +219,12 @@ button.loneTopButton {
     HEXAGONALLABYRINTH -------------------------------------------------
 */
 
-#hexagonallabyrinth_table{
+#hexagonallabyrinth_table {
     width: 50rem;
     margin: auto;
 }
-#hexagonallabyrinth_desc{
+
+#hexagonallabyrinth_desc {
     width: 49%;
     display: inline-block;
     margin: auto;
@@ -236,11 +248,11 @@ button.loneTopButton {
     PI -----------------------------------------------------------------
 */
 
-#PI_canvas{
+#PI_canvas {
     width: 36rem;
 }
 
-#PI_body{
+#PI_body {
     text-align: center;
 }
 
@@ -252,7 +264,7 @@ button.loneTopButton {
     SUFFIX TREE ------------------------------------------------
 */
 
-#suffix_input_container{
+#suffix_input_container {
     width: 25%;
     margin: auto;
 }
@@ -266,7 +278,7 @@ The pixels were blurry by default
 https://stackoverflow.com/questions/42588501/how-do-i-fix-blurry-shape-edges-in-html5-canvas
 some css taken from here
 */
-#waveequationcanvas{
+#waveequationcanvas {
     width: 36rem;
     height: 36rem;
     image-rendering: -moz-crisp-edges;

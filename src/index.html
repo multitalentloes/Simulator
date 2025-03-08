@@ -1,62 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Index</title>
-        <link rel="stylesheet" type="text/css" href="index.css">
-    </head>
 
-    <body>
-        <h1> The simulator canvases</h1>
-        <div class="horizontal_list">
-            <ul>
-                <h2 id="title"> Algorithm/Maths Canvases </h2>
-                <li>
-                    <a href="topographicalmap/topographicalmap.html">Interactive topographical map</a>
-                </li>
-                <li>
-                    <a href="CVRP/CVRP.html">Capacitated vehicle routing problem</a>
-                </li>
-                <li>
-                    <a href="suffixtree/suffixtree.html">Suffix Tree visualizer</a>
-                </li>
-                <li>
-                    <a href="travelling_salesman/travelling_salesman.html">Travelling salesman</a>
-                </li>
-                <li>
-                    <a href="convexhull/convexhull.html">Convex hull</a>
-                </li>
-                <li>
-                    <a href="MST/MST.html">Minimum spanning tree</a>
-                </li>
-                <li>
-                    <a href="clustering/clustering.html">K-means clustering</a>
-                </li>
-                <li>
-                    <a href="hexagonallabyrinth/hexagonallabyritnh.html">Hexagon maze generator & solver</a>
-                </li>
-                <li>
-                    <a href="PI/PI.html">PI approximation</a>
-                </li>
-            </ul>
-            <ul>
-                <h2 id="title"> Physics Canvases </h2>
-                <li>
-                    <a href="lightsource/lightsource.html">2D ray-casting</a>
-                </li>
-                <li>
-                    <a href="gravityvectorfield/gravityvectorfield.html">Gravitational vectorfield</a>
-                </li>
-                <li>
-                    <a href="waveequation/waveequation.html">Interactive wave equation</a>
-                </li>
-                <li>
-                    <a href="orbit/orbit.html">Orbit simulation</a>
-                </li>
-                <li>
-                    <a href="bridge/bridge.html">Bridge simulator [unfinished]</a>
-                </li>
-            </ul>
-        </div>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #backgroundCanvas {
+            position: fixed;
+            top: -2rem;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-color: white;
+            border: 0;
+            /* Added background color for visibility */
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+            font-size: 2rem;
+            margin-top: 20vh;
+        }
+
+
+        #main_title {
+            text-align: center;
+            outline-color: red;
+        }
+
+        #title {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    <h1 id="main_title"> The Simulator Canvases</h1>
+    <div class="horizontal_list">
+        <ul class="front_page_list">
+            <h2 id="title"> Algorithm/Maths Canvases </h2>
+            <li class="front_page_list_item">
+                <a href="topographicalmap/topographicalmap.html">Interactive topographical map</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="CVRP/CVRP.html">Capacitated vehicle routing problem</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="suffixtree/suffixtree.html">Suffix Tree visualizer</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="travelling_salesman/travelling_salesman.html">Travelling salesman</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="convexhull/convexhull.html">Convex hull</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="MST/MST.html">Minimum spanning tree</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="clustering/clustering.html">K-means clustering</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="hexagonallabyrinth/hexagonallabyritnh.html">Hexagon maze generator & solver</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="PI/PI.html">PI approximation</a>
+            </li>
+        </ul>
+        <ul class="front_page_list">
+            <h2 id="title"> Physics Canvases </h2>
+            <li class="front_page_list_item">
+                <a href="lightsource/lightsource.html">2D ray-casting</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="gravityvectorfield/gravityvectorfield.html">Gravitational vectorfield</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="waveequation/waveequation.html">Interactive wave equation</a>
+            </li>
+            <li class="front_page_list_item">
+                <a href="orbit/orbit.html">Orbit simulation</a>
+            </li>
+            <!-- <li class="front_page_list_item">
+                <a href="bridge/bridge.html">Bridge simulator [unfinished]</a>
+            </li> -->
+        </ul>
+    </div>
+</body>
+
+<script>
+
+    const canvas = document.getElementById('backgroundCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas to full screen
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Draw a simple rectangle to verify the canvas is working
+
+    const particles = [];
+    const numParticles = 25;
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 20 + 5;
+            this.speedX = Math.random() * 2 - 1;
+            this.speedY = Math.random() * 2 - 1;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(150, 150, 150, 1.0)";
+            ctx.fill();
+        }
+    }
+
+    function drawLines() {
+        const threshold = 250; // Distance threshold for drawing lines
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < threshold) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = "rgba(150, 150, 150, 0.5)";
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function init() {
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawLines();
+        particles.forEach((particle) => {
+            particle.update();
+            particle.draw();
+        });
+    }
+
+    setInterval(animate, 20);
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    init();
+    animate();
+</script>
+
 </html>

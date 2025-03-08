@@ -1,20 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>topographical Map</title>
-        <link rel="stylesheet" type="text/css" href="../index.css">
-        <script type="text/javascript" src="Point.js"></script>
-        <script type="text/javascript" src="Line.js"></script>
-        <script type="text/javascript" src="Grid.js"></script>
-        <script type="text/javascript" src="CanvasHandler.js"></script>
-        <script type="text/javascript" src="main.js"></script>
-    </head>
 
-    <body>
-        <h3 class="description"> Interactive topographical map</h3>
-        <p class="description"> Left click to raise the landscape. <br> Inspired by https://www.youtube.com/watch?v=6oMZb3yP_H8&ab_channel=Reducible</p> 
+<head>
+    <meta charset="UTF-8">
+    <title>topographical Map</title>
+    <link rel="stylesheet" type="text/css" href="../index.css">
+    <script type="text/javascript" src="Point.js"></script>
+    <script type="text/javascript" src="Line.js"></script>
+    <script type="text/javascript" src="Grid.js"></script>
+    <script type="text/javascript" src="CanvasHandler.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</head>
 
-        <canvas id="topographicalmap_canvas" width=1920 height=1080></canvas>
-    </body>
+<body>
+    <!-- TODO: how can I avoid duplicating the navbar on every page?-->
+    <!-- TODO: using fetch got blocked by CORS, iframe had weird styling... -->
+    <nav>
+        <ul class="nav_outer_list">
+            <li class="nav_outer_list_item">
+                <a href="../index.html">Home</a>
+            </li>
+            <li class="nav_outer_list_item">
+                <a href="about.html">Algorithm/Math Canvases</a>
+                <ul class="nav_inner_list">
+                    <li class="nav_inner_list_item">
+                        <a href="../topographicalmap/topographicalmap.html">
+                            Interactive Topographical Map
+                        </a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../CVRP/CVRP.html">Capacitated Vehicle Rounting Problem</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../suffixtree/suffixtree.html">Suffix Tree Visualizer</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../travelling_salesman/travelling_salesman.html">Travelling
+                            Salesman</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../convexhull/convexhull.html">Convex Hull</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../MST/MST.html">Minimum Spanning Tree</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../clustering/clustering.html">K-means Clustering</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../hexagonallabyrinth/hexagonallabyritnh.html">Hexagon Maze
+                            Generator & Solver</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../PI/PI.html">PI Approximation</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav_outer_list_item">
+                <a href="contact.html">Physics Canvases</a>
+                <ul class="nav_inner_list">
+                    <li class="nav_inner_list_item">
+                        <a href="../lightsource/lightsource.html">2D Ray-Casting</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../gravityvectorfield/gravityvectorfield.html">Gravitational Vectorfield</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../waveequation/waveequation.html">Interactive Wave
+                            Equation</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../orbit/orbit.html">Orbit Simulation</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav_outer_list_item">
+                <a href="https://github.com/multitalentloes/Simulator">GitHub Repository</a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        document.querySelectorAll('nav ul li').forEach(function (menuItem) {
+            menuItem.addEventListener('mouseover', function () {
+                this.querySelector('ul').style.display = 'block';
+            });
+            menuItem.addEventListener('mouseout', function () {
+                this.querySelector('ul').style.display = 'none';
+            });
+        });
+    </script>
+
+    <h3 class="description"> Interactive topographical map</h3>
+    <p class="description"> Left click to raise the landscape. <br> Inspired by
+        https://www.youtube.com/watch?v=6oMZb3yP_H8&ab_channel=Reducible</p>
+
+    <canvas id="topographicalmap_canvas" width=1920 height=1080></canvas>
+</body>
+
 </html>
