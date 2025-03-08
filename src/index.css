@@ -10,7 +10,7 @@
     display: flex;
 }
 
-ul {
+ul.front_page_list {
     margin: 2rem auto;
     padding: 1rem;
     background-color: #F7F7F7;
@@ -18,11 +18,17 @@ ul {
     border: 2px solid darkslategrey;
 }
 
-li {
+li.front_page_list_item {
     display: block;
     padding: 1rem;
     text-align: left;
     font-size: large;
+}
+
+li.front_page_list_item:hover {
+    background-color: #E7E7E7;
+    border-color: darkslategray;
+    border-width: 2px;
 }
 
 a {
@@ -66,7 +72,51 @@ button.loneTopButton {
     margin: 2rem auto;
 }
 
+nav {
+    background-color: #F7F7F7;
+}
 
+.nav_outer_list {
+    font-size: large;
+    list-style-type: none;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.nav_outer_list_item {
+    position: relative;
+    margin: 10px 0rem;
+    padding: 0 6rem;
+}
+
+.nav_inner_list {
+    list-style-type: none;
+    border: 1px solid gray;
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    display: none;
+    padding: 0;
+    margin: 0;
+    background-color: white;
+    width: 100%;
+}
+
+.nav_inner_list_item {
+    border: 1px solid gray;
+    padding: 0.5rem;
+}
+
+.nav_inner_list_item:hover {
+    background-color: #E7E7E7;
+    transition: background-color 0.4s ease;
+    border-color: darkslategray;
+    border-width: 2px;
+}
 
 /*
     ####################################################################

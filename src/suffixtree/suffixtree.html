@@ -1,23 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Suffix Tree</title>
-        <link rel="stylesheet" type="text/css" href="../index.css">
-        <script type="text/javascript" src="SuffixTree.js"></script>
-        <script type="text/javascript" src="Node.js"></script>
-        <script type="text/javascript" src="CanvasHandler.js"></script>
-        <script type="text/javascript" src="main.js"></script>
-    </head>
 
-    <body>
-        <h3 class="description"> Suffix Tree Builder (ukkonens construction algorithm)</h3>
-        <p class="description"> Input a string to see its suffix tree ($ is reserved for termination symbol)</p> 
-        <div id="suffix_input_container">
-            <label for="suff_string">Enter a string</label>
-            <input type="text" id="suff_string" name="suff_string">
-            <button id="suff_button">Show suffix tree</button>
-        </div>
-        <canvas id="suffix_canvas" width=1920 height=1080></canvas>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Suffix Tree</title>
+    <link rel="stylesheet" type="text/css" href="../index.css">
+    <script type="text/javascript" src="SuffixTree.js"></script>
+    <script type="text/javascript" src="Node.js"></script>
+    <script type="text/javascript" src="CanvasHandler.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</head>
+
+<body>
+    <nav>
+        <ul class="nav_outer_list">
+            <li class="nav_outer_list_item">
+                <a href="../index.html">Home</a>
+            </li>
+            <li class="nav_outer_list_item">
+                <a href="about.html">Algorithm/Math Canvases</a>
+                <ul class="nav_inner_list">
+                    <li class="nav_inner_list_item">
+                        <a href="../topographicalmap/topographicalmap.html">
+                            Interactive Topographical Map
+                        </a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../CVRP/CVRP.html">Capacitated Vehicle Rounting Problem</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../suffixtree/suffixtree.html">Suffix Tree Visualizer</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../travelling_salesman/travelling_salesman.html">Travelling
+                            Salesman</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../convexhull/convexhull.html">Convex Hull</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../MST/MST.html">Minimum Spanning Tree</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../clustering/clustering.html">K-means Clustering</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../hexagonallabyrinth/hexagonallabyritnh.html">Hexagon Maze
+                            Generator & Solver</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../PI/PI.html">PI Approximation</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav_outer_list_item">
+                <a href="contact.html">Physics Canvases</a>
+                <ul class="nav_inner_list">
+                    <li class="nav_inner_list_item">
+                        <a href="../lightsource/lightsource.html">2D Ray-Casting</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../gravityvectorfield/gravityvectorfield.html">Gravitational Vectorfield</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../waveequation/waveequation.html">Interactive Wave
+                            Equation</a>
+                    </li>
+                    <li class="nav_inner_list_item">
+                        <a href="../orbit/orbit.html">Orbit Simulation</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav_outer_list_item">
+                <a href="https://github.com/multitalentloes/Simulator">GitHub Repository</a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        document.querySelectorAll('nav ul li').forEach(function (menuItem) {
+            menuItem.addEventListener('mouseover', function () {
+                this.querySelector('ul').style.display = 'block';
+            });
+            menuItem.addEventListener('mouseout', function () {
+                this.querySelector('ul').style.display = 'none';
+            });
+        });
+    </script>
+    <h3 class="description"> Suffix Tree Builder (ukkonens construction algorithm)</h3>
+    <p class="description"> Input a string to see its suffix tree ($ is reserved for termination symbol)</p>
+    <div id="suffix_input_container">
+        <label for="suff_string">Enter a string</label>
+        <input type="text" id="suff_string" name="suff_string">
+        <button id="suff_button">Show suffix tree</button>
+    </div>
+    <canvas id="suffix_canvas" width=1920 height=1080></canvas>
+</body>
+
 </html>
