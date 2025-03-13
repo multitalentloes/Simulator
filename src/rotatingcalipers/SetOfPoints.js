@@ -5,13 +5,14 @@ class SetOfPoints {
         this.RED = "#AA0000";
         this.GREEN = "#009900"
         this.CH = null;
+        this.curOBB = []
+        this.bestOBB = []
+        this.OMBB = []
 
         this.grahamScan = this.grahamScan.bind(this);
-        this.grahamScan();
         this.rotatingCalipers = this.rotatingCalipers.bind(this);
         this.draw = this.draw.bind(this);
-
-        this.OMBB = this.rotatingCalipers(this.CH);
+        this.grahamScan();
     }
 
     draw(c) {
@@ -25,11 +26,20 @@ class SetOfPoints {
             c.closePath();
             c.fill();
 
-            c.fillStyle = "#FF0000";
-            for (let i = 0; i < this.OMBB.length; i++) {
+            c.lineWidth = 2;
+            for (let i = 0; i < this.curOBB.length; i++) {
                 c.beginPath();
-                c.moveTo(this.OMBB[i].pos.x, this.OMBB[i].pos.y);
-                c.lineTo(this.OMBB[(i + 1) % this.OMBB.length].pos.x, this.OMBB[(i + 1) % this.OMBB.length].pos.y);
+                c.moveTo(this.curOBB[i].pos.x, this.curOBB[i].pos.y);
+                c.lineTo(this.curOBB[(i + 1) % this.curOBB.length].pos.x, this.curOBB[(i + 1) % this.curOBB.length].pos.y);
+                c.stroke();
+            }
+
+            c.strokeStyle = this.RED;
+            c.lineWidth = 7;
+            for (let i = 0; i < this.bestOBB.length; i++) {
+                c.beginPath();
+                c.moveTo(this.bestOBB[i].pos.x, this.bestOBB[i].pos.y);
+                c.lineTo(this.bestOBB[(i + 1) % this.bestOBB.length].pos.x, this.bestOBB[(i + 1) % this.bestOBB.length].pos.y);
                 c.stroke();
             }
         }
@@ -140,8 +150,8 @@ class SetOfPoints {
         return new Point(x, y, 15);
     }
 
-    rotatingCalipers(hull) {
-        console.log(hull);
+    *rotatingCalipers() {
+        let hull = this.CH;
         const n = hull.length;
         console.log(n);
         let minArea = Infinity;
@@ -202,9 +212,14 @@ class SetOfPoints {
             const width = this.distance(ABIntersection, DAIntersection);
             const height = this.distance(ABIntersection, BCIntersection);
             const area = width * height;
+
+            this.curOBB = [ABIntersection, BCIntersection, CDIntersection, DAIntersection];
+            yield true;
+
             if (area < minArea) {
                 minArea = area;
                 bestRectangle = [ABIntersection, BCIntersection, CDIntersection, DAIntersection];
+                this.bestOBB = bestRectangle;
             }
 
             const angles = [
@@ -218,6 +233,30 @@ class SetOfPoints {
                 if (angles[j] > 359) {
                     minAngle = angles[j] - 360;
                 }
+            }
+
+            // to produce a smooth animation we add some intermediate frames when
+            // the calipers are rotated by more than 1 degree
+            let minAngleCopy = minAngle;
+            let cnt = 1;
+            while (minAngleCopy > 1) {
+                minAngleCopy -= 1;
+                // compute the bounding box at this intermediate angle
+                let caliperAVec_copy = this.rotateVector(caliperAVec, cnt);
+                let caliperBVec_copy = this.rotateVector(caliperBVec, cnt);
+                let caliperCVec_copy = this.rotateVector(caliperCVec, cnt);
+                let caliperDVec_copy = this.rotateVector(caliperDVec, cnt);
+                cnt += 1;
+                const A = hull[caliperAIdx];
+                const B = hull[caliperBIdx];
+                const C = hull[caliperCIdx];
+                const D = hull[caliperDIdx];
+                const ABIntersection = this.lineIntersection(A, A.add(caliperAVec_copy), B, B.add(caliperBVec_copy));
+                const BCIntersection = this.lineIntersection(B, B.add(caliperBVec_copy), C, C.add(caliperCVec_copy));
+                const CDIntersection = this.lineIntersection(C, C.add(caliperCVec_copy), D, D.add(caliperDVec_copy));
+                const DAIntersection = this.lineIntersection(D, D.add(caliperDVec_copy), A, A.add(caliperAVec_copy));
+                this.curOBB = [ABIntersection, BCIntersection, CDIntersection, DAIntersection];
+                yield true;
             }
 
             if (minAngle === angles[0]) {
@@ -248,6 +287,9 @@ class SetOfPoints {
         }
 
         console.log(minArea);
-        return bestRectangle;
+        this.OMBB = bestRectangle;
+        while (true) {
+            yield true;
+        }
     }
 }
