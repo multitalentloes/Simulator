@@ -2,9 +2,9 @@ class CanvasHandler {
     constructor() {
         this.WIDTH = 1920;
         this.HEIGHT = 1080;
-        this.NUM_OF_POINTS = 20;
+        this.NUM_OF_POINTS = 15;
 
-        this.c = document.getElementById("convexhull_canvas").getContext("2d");
+        this.c = document.getElementById("rotatingcalipers_canvas").getContext("2d");
 
         this.points_set = new SetOfPoints(this.generatePoints(this.NUM_OF_POINTS));
         this.nextFrame = this.points_set.rotatingCalipers();
@@ -36,7 +36,7 @@ class CanvasHandler {
         for (let i = 0; i < n; i++) {
             let p;
             do {
-                let x = Math.floor(Math.random() * (this.WIDTH - 900) + 450);
+                let x = Math.floor(Math.random() * (this.WIDTH - 1200) + 600);
                 let y = Math.floor(Math.random() * (this.HEIGHT - 500) + 250);
                 p = new Point(x, y, 15);
             } while (res.some((e) => p.dist(e) <= 40)); //generate new point unless not all points are far enough away 

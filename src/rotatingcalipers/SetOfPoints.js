@@ -26,7 +26,7 @@ class SetOfPoints {
             c.closePath();
             c.fill();
 
-            c.lineWidth = 2;
+            c.lineWidth = 8;
             for (let i = 0; i < this.curOBB.length; i++) {
                 c.beginPath();
                 c.moveTo(this.curOBB[i].pos.x, this.curOBB[i].pos.y);
@@ -35,7 +35,7 @@ class SetOfPoints {
             }
 
             c.strokeStyle = this.RED;
-            c.lineWidth = 7;
+            c.lineWidth = 3;
             for (let i = 0; i < this.bestOBB.length; i++) {
                 c.beginPath();
                 c.moveTo(this.bestOBB[i].pos.x, this.bestOBB[i].pos.y);
@@ -153,7 +153,6 @@ class SetOfPoints {
     *rotatingCalipers() {
         let hull = this.CH;
         const n = hull.length;
-        console.log(n);
         let minArea = Infinity;
         let bestRectangle = [];
 
@@ -194,7 +193,7 @@ class SetOfPoints {
         let caliperDVec = new Point(0, -1, 15);
         let caliperDIdx = maxXIdx;
 
-        for (let i = 0; i < n + 2; i++) {
+        for (let i = 0; i < n + 1; i++) {
             const A = hull[caliperAIdx];
             const B = hull[caliperBIdx];
             const C = hull[caliperCIdx];
@@ -286,8 +285,8 @@ class SetOfPoints {
             }
         }
 
-        console.log(minArea);
-        this.OMBB = bestRectangle;
+        // this.OMBB = bestRectangle;
+        this.curOBB = [];
         while (true) {
             yield true;
         }

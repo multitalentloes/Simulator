@@ -90,16 +90,18 @@
     </script>
     <h3 class="description"> Rotating Calipers</h3>
     <p class="description"> This canvas shows how the rotating calipers method can be used to solve the minimum oriented
-        bounding box problem in O(N) given a convex hull</p>
-    <div id="convexhull_menu">
-        <div id="convexhull_buttonContainer1">
-            <button id="convexhull_restartButton">Restart animation</button>
+        bounding box (OMBB) problem in O(N) given a convex hull.</p>
+    <p class="description"> The black bounding box represents the rotating calipres, whereas the red bounding box
+        represents the minimum oriented bounding box found so far.</p>
+    <div id="rotatingcalipers_menu">
+        <div id="rotatingcalipers_buttonContainer1">
+            <button id="rotatingcalipers_restartButton">Restart animation</button>
         </div>
-        <div id="convexhull_buttonContainer3">
-            <button id="convexhull_newButton">New points</button>
+        <div id="rotatingcalipers_buttonContainer3">
+            <button id="rotatingcalipers_newButton">New points</button>
         </div>
     </div>
-    <canvas id="convexhull_canvas" width=1920 height=1080></canvas>
+    <canvas id="rotatingcalipers_canvas" width=1920 height=1080></canvas>
 </body>
 
 </html>
