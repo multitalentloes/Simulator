@@ -46,12 +46,16 @@ class Grid {
         this.gridHeight = 15;
         this.gridWidth = 20;
 
+        // The grid will be animation with a skewed perspective to make it look 3D
+        // By adjusing the y_vector to not be along the y-axis, we can create a skewed effect
+        // The x_vector is always along the x-axis
+        this.y_vector = { first: 1, second: -0.1 };
+
         this.start = { first: 0, second: 0 };
-        // this.end = {
-        //     first: Math.max(0, this.gridHeight - 1 - Math.floor(Math.random() * 3)),
-        //     second: Math.max(0, this.gridWidth - 1 - Math.floor(Math.random() * 3))
-        // };
-        this.end = { first: 12, second: 18 };
+        this.end = {
+            first: Math.max(0, this.gridHeight - 1 - Math.floor(Math.random() * 3)),
+            second: Math.max(0, this.gridWidth - 1 - Math.floor(Math.random() * 3))
+        };
 
         this.timestep = 0; // used to determine which boxes to show in animation
         this.solved = false;
@@ -99,7 +103,9 @@ class Grid {
         for (let i = 0; i < this.gridHeight; i++) {
             this.grid.push([]);
             for (let j = 0; j < this.gridWidth; j++) {
-                this.grid[i].push(new Cell(50 + j * this.cellWidth, 50 + i * this.cellWidth, this.cellWidth));
+                let raw_x = 450 + j * this.cellWidth;
+                let raw_y = 50 + i * this.cellWidth;
+                this.grid[i].push(new Cell(raw_x - (0.4 * raw_y), raw_y, this.cellWidth));
             }
         }
 

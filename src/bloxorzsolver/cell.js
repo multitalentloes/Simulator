@@ -24,10 +24,17 @@ class Cell {
         if (this.state == "B") {
             c.fillStyle = "black";
         }
-        c.fillRect(this.x, this.y, this.width, this.width);
+        c.beginPath();
+        c.moveTo(this.x, this.y); // Top point
+        c.lineTo(this.x + this.width, this.y); // Right point
+        c.lineTo(this.x + this.width - this.width * 0.4, this.y + this.width); // Bottom point
+        c.lineTo(this.x - this.width * 0.4, this.y + this.width); // Left point
+        c.closePath();
+
+        c.fill();
 
         c.strokeStyle = "black";
         c.lineWidth = 4;
-        c.strokeRect(this.x, this.y, this.width, this.width);
+        c.stroke();
     }
 }
