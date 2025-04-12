@@ -15,20 +15,6 @@ class CanvasHandler {
     }
 
     reset() {
-    }
-
-    generateKruskalLabyrinth() {
-        this.grid.animation = this.grid.generateKruskalLabyrinth();
-    }
-
-    generateDFSLabyrinth() {
-        this.grid.animation = this.grid.generateDFSLabyrinth();
-    }
-
-    BFS() {
-        this.grid.animation = this.grid.BFS();
-    }
-    AStarMeetInTheMiddle() {
-        this.grid.animation = this.grid.AStarMeetInTheMiddle();
+        this.grid = new Grid(68);
     }
 }
