@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>clustering</title>
+    <link rel="stylesheet" type="text/css" href="../index.css">
+    <script type="text/javascript" src="Point.js"></script>
+    <script type="text/javascript" src="SetOfPoints.js"></script>
+    <script type="text/javascript" src="CanvasHandler.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</head>
+
+<body>
+    [[INSERT_STATIC_COMPONENT]] navbar
+    <h3 class="description"> K-Means Clustering</h3>
+    <p class="description"> K-means is used to group similar data together. Euclidian distance is used as the metric of
+        relatedness.</p>
+    <button class="loneTopButton" id="clustering_newPoints"> New Points</button>
+    <canvas id="canvas" width=1920 height=1080></canvas>
+</body>
+
+</html>
