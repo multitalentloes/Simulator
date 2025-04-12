@@ -45,15 +45,14 @@ def get_components():
         print(f"Directory '{components_dir}' does not exist.")
         return components
     
-    # Recursively walk through the components directory
-    for root, _, files in os.walk(components_dir):
-        for file in files:
-            if file.endswith('.html'):
-                component_name = os.path.splitext(file)[0]  # Get the file name without the extension
-                component_path = os.path.join(root, file)
-                with open(component_path, 'r') as component_file:
-                    content = component_file.read()
-                    components[component_name] = content
+    # List files directly in the components directory
+    for file in os.listdir(components_dir):
+        if file.endswith('.html'):
+            component_name = os.path.splitext(file)[0]  # Get the file name without the extension
+            component_path = os.path.join(components_dir, file)
+            with open(component_path, 'r') as component_file:
+                content = component_file.read()
+                components[component_name] = content
     
     print(f"Loaded components from: {components_dir}")
     print(f"Found {len(components)} components.")
