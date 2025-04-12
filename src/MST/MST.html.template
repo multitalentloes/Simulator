@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MST</title>
+    <link rel="stylesheet" type="text/css" href="../index.css">
+    <script type="text/javascript" src="SetOfPoints.js"></script>
+    <script type="text/javascript" src="Line.js"></script>
+    <script type="text/javascript" src="Point.js"></script>
+    <script type="text/javascript" src="CanvasHandler.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</head>
+
+<body id="body">
+    [[INSERT_STATIC_COMPONENT]] navbar
+    <h3 class="description"> Minimum Spanning Tree (MST)</h3>
+    <p class="description"> Given a weighted, connected graph, the MST is the connected subgraph containing all the
+        nodes, that minimizes the sum of its edges.</p>
+    <p class="description"> The animation uses the euclidian distance as weights, and Prims algorithm to compute the MST
+    </p>
+    <button class="loneTopButton" id="MST_newPoints">New Points</button>
+    <canvas id="canvas" width=1920 height=1080></canvas>
+</body>
+
+</html>

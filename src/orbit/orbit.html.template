@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Orbit</title>
+    <link rel="stylesheet" type="text/css" href="../index.css">
+    <script type="text/javascript" src="Planet.js"></script>
+    <script type="text/javascript" src="CanvasHandler.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</head>
+
+<body id="body">
+    [[INSERT_STATIC_COMPONENT]] navbar
+    <h3 class="description"> Click and drag to spawn moving bodies</h3>
+    <canvas id="canvas" width=1920 height=1080></canvas>
+</body>
+
+</html>

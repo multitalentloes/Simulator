@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Wave equation</title>
+    <link rel="stylesheet" type="text/css" href="../index.css">
+    <script type="text/javascript" src="Grid.js"></script>
+    <script type="text/javascript" src="CanvasHandler.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</head>
+
+<body id="body">
+    [[INSERT_STATIC_COMPONENT]] navbar
+    <h3 class="description"> Numerical solution of wave equation (periodic boundary conditions, grid size 75x75)</h3>
+    <p class="description"> Click inside the canvas to add your own waves </p>
+    <canvas id="waveequationcanvas" width=75 height=75></canvas>
+</body>
+
+</html>
