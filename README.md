@@ -8,6 +8,7 @@ Current canvases:
  - [Local serach for travelling salesman problem](https://multitalentloes.github.io/Simulator/src/travelling_salesman/travelling_salesman.html)
  - [Suffix tree visualization](https://multitalentloes.github.io/Simulator/src/suffixtree/suffixtree.html)
  - [Rotating Calipers solution to oriented minimum bounding box (OMBB) problem](https://multitalentloes.github.io/Simulator/src/rotatingcalipers/rotatingcalipers.html)
+ - [Animation of solution to Bloxorz variant (Crate Chucking on Kattis)](https://multitalentloes.github.io/Simulator/src/bloxorzsolver/bloxorzsolver.html)
  - [Graham scan animation for computing convex hulls](https://multitalentloes.github.io/Simulator/src/convexhull/convexhull.html)
  - [Animation of Prims algorithm for minimal spaning tree](https://multitalentloes.github.io/Simulator/src/MST/MST.html)
  - [Animation of K-means clustering algorithm](https://multitalentloes.github.io/Simulator/src/clustering/clustering.html)

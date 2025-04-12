@@ -61,10 +61,18 @@ canvas {
 h3.description {
     margin: 4rem auto 1rem;
     text-align: center;
+    width: 75rem;
 }
 
 p.description {
     text-align: center;
+    margin: 0 auto;
+    width: 75rem;
+}
+
+ol.description {
+    margin: 0 auto;
+    width: 75rem;
 }
 
 button.loneTopButton {

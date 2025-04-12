@@ -3,15 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Suffix Tree</title>
+    <title>Bloxorz solver</title>
     <link rel="stylesheet" type="text/css" href="../index.css">
-    <script type="text/javascript" src="SuffixTree.js"></script>
-    <script type="text/javascript" src="Node.js"></script>
+    <script type="text/javascript" src="cell.js"></script>
+    <script type="text/javascript" src="grid.js"></script>
     <script type="text/javascript" src="CanvasHandler.js"></script>
     <script type="text/javascript" src="main.js"></script>
 </head>
 
-<body>
+<body id="body">
+
     <nav>
         <ul class="nav_outer_list">
             <li class="nav_outer_list_item">
@@ -93,14 +94,25 @@
             });
         });
     </script>
-    <h3 class="description"> Suffix Tree Builder (ukkonens construction algorithm)</h3>
-    <p class="description"> Input a string to see its suffix tree ($ is reserved for termination symbol)</p>
-    <div id="suffix_input_container">
-        <label for="suff_string">Enter a string</label>
-        <input type="text" id="suff_string" name="suff_string">
-        <button id="suff_button">Show suffix tree</button>
-    </div>
-    <canvas id="suffix_canvas" width=1920 height=1080></canvas>
+    <h3 class="description"> Bloxorz Solver</h3>
+    <p class="description">
+        This is an animation of solutions to randomly generated problem instances from a variant of
+        the flash-game Bloxorz. The goal of the game is to move a 2x1x1 box from a starting square to the target square,
+        avoiding the black ones. Additionally, this animation respects two extra constraints:
+    </p>
+    <br>
+    <ol class="description">
+        <li>Limiting the box from moving in the same direction for two consecutive steps.</li>
+        <li>Finding the least energy-expedient solution, given that it takes more energy to lift a box that lies down,
+            and less to topple a standing box over.</li>
+    </ol>
+    <br>
+    <p class="description">
+        This version of the game was given as a problem for the 2025 IDI-Open competitive programming contest under the
+        name "Crate Chucking": https://idio25.kattis.com/contests/idio25/problems/cratechucking
+    </p>
+    <button class="loneTopButton" id="restartBloxorz"> Generate New Level </button>
+    <canvas id="canvas" width=1920 height=1080></canvas>
 </body>
 
 </html>
