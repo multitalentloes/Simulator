@@ -58,6 +58,7 @@ class Grid {
         };
 
         this.timestep = 0; // used to determine which boxes to show in animation
+        this.animation_step = 0; // used to determine which frame of box movement animation to use
         this.solved = false;
 
         this.grid = [];
@@ -103,8 +104,8 @@ class Grid {
         for (let i = 0; i < this.gridHeight; i++) {
             this.grid.push([]);
             for (let j = 0; j < this.gridWidth; j++) {
-                let raw_x = 450 + j * this.cellWidth;
-                let raw_y = 50 + i * this.cellWidth;
+                let raw_x = 550 + j * this.cellWidth;
+                let raw_y = 120 + i * this.cellWidth;
                 this.grid[i].push(new Cell(raw_x - (0.4 * raw_y), raw_y, this.cellWidth));
             }
         }
@@ -119,22 +120,18 @@ class Grid {
     }
 
     generate_solvable_grid(threshold) {
-        console.log("Generating solvable grid");
         let cnt = 0;
         let blocked_circles = 5;
 
         for (let n_circles = 0; n_circles <= blocked_circles; n_circles++) {
             cnt++;
-            console.log("Starting attempt " + cnt);
             if (cnt % 5 == 0) {
-                console.log("reducing blocked circles");
                 blocked_circles--;
             }
 
             for (let attempts = 0; attempts < 1; attempts++) {
                 this.resetSolveState();
                 let centerX, centerY, radius;
-                console.log("Starting local attempt " + cnt);
                 for (let circle = 0; circle < blocked_circles; circle++) {
                     while (true) {
                         centerX = Math.floor(Math.random() * this.gridWidth);
@@ -181,9 +178,8 @@ class Grid {
             }
         }
         // If we reach here, we couldn't generate a solvable grid
-        // Fallback to a default grid                    // If not solvable, reset the grid and try again
-        console.log(this.solve());
-        console.log(this.end);
+        // Fallback to a default grid
+        // If not solvable, reset the grid and try again
     }
 
     * placeholder() {
@@ -199,20 +195,41 @@ class Grid {
             return;
         }
 
-        for (let i = 0; i < Math.max(1, (this.solution_path.length - 6) / 6); i++) {
-            let local_step = (mod_step + 6 * i) % this.solution_path.length;
-            // apply effect of moving box to current solution step
-            if (this.solution_path[local_step].length == 2) {
-                this.grid[this.solution_path[local_step][0]][this.solution_path[local_step][1]].state = "O";
-            } else {
-                this.grid[this.solution_path[local_step][0]][this.solution_path[local_step][1]].state = "O";
-                this.grid[this.solution_path[local_step][2]][this.solution_path[local_step][3]].state = "O";
-            }
-        }
-
         for (let row of this.grid) {
             for (let cell of row) {
                 cell.draw(c);
+            }
+        }
+
+        for (let i = 0; i < 3; i++) {
+            let local_step = (mod_step + Math.floor(this.solution_path.length / 3) * i) % this.solution_path.length;
+            if (this.solution_path[local_step].length == 2) {
+                // the box is standing.
+
+                let cell = this.grid[this.solution_path[local_step][0]][this.solution_path[local_step][1]];
+                // it may be rolling any of the 4 directions
+
+                draw_standing_box(c, cell);
+
+            } else {
+
+                let c1_y_grid_coord = this.solution_path[local_step][0];
+                let c1_x_grid_coord = this.solution_path[local_step][1];
+                let c2_y_grid_coord = this.solution_path[local_step][2];
+                let c2_x_grid_coord = this.solution_path[local_step][3];
+
+                let c1 = this.grid[c1_y_grid_coord][c1_x_grid_coord];
+                let c2 = this.grid[c2_y_grid_coord][c2_x_grid_coord];
+
+                if (c1_x_grid_coord != c2_x_grid_coord) {
+                    let left_c = (c1_x_grid_coord < c2_x_grid_coord) ? c1 : c2;
+                    draw_lying_box_siweways(c, left_c);
+                }
+                else {
+                    // Lower in this case is higher index because y=0 is at the to of the canvas
+                    let lower_c = (c1_y_grid_coord > c2_y_grid_coord) ? c1 : c2;
+                    draw_lying_box_up(c, lower_c);
+                }
             }
         }
 
@@ -234,7 +251,6 @@ class Grid {
 
         let idxs = getTIndex(idx, B, C, D);
         while (true) {
-            console.log
             if (idxs.s === STATE.STANDING) {
                 console.assert(this.grid[idxs.y][idxs.x].state != "B");
                 this.grid[idxs.y][idxs.x].state = "P";
@@ -338,7 +354,6 @@ class Grid {
             const [weight_u, u] = pq.pop();
 
             const u_idx = getTIndex(u, this.gridWidth, NSTATES, NDIRS);
-            // console.log(u, this.gridWidth, NSTATES, NDIRS, u_idx);
 
             for (const neighbor of this.g[u_idx.y][u_idx.x][u_idx.s][u_idx.p]) {
                 const [weight_uv, v] = neighbor;
@@ -368,7 +383,6 @@ class Grid {
         const endUp = makeIDX(end.first, end.second, this.gridWidth, STATE.STANDING, NSTATES, PREV.UP, NDIRS);
         const endDown = makeIDX(end.first, end.second, this.gridWidth, STATE.STANDING, NSTATES, PREV.DOWN, NDIRS);
         const best = Math.min(this.dist[endLeft], this.dist[endRight], this.dist[endUp], this.dist[endDown]);
-        console.log(this.dist[endLeft], this.dist[endRight], this.dist[endUp], this.dist[endDown]);
         if (best == INF) {
             return false;
         }
@@ -416,4 +430,114 @@ class Grid {
             }
         }
     }
+}
+
+
+function draw_standing_box(c, cell) {
+    c.strokeStyle = "black";
+    c.fillStyle = "grey";
+    c.lineWidth = 4;
+
+    // STANDING TALL BOX FRONT FACE
+    c.beginPath();
+    c.moveTo(cell.x - cell.width * 0.4, cell.y - cell.width); // bottom left
+    c.lineTo(cell.x + cell.width - cell.width * 0.4, cell.y - cell.width); // bottom right
+    c.lineTo(cell.x + cell.width - cell.width * 0.4, cell.y + cell.width); // top right
+    c.lineTo(cell.x - cell.width * 0.4, cell.y + cell.width); // top left
+    c.closePath();
+    c.fill();
+    c.stroke();
+
+    // STANDING TALL BOX RIGHT FACE
+    c.beginPath();
+    c.moveTo(cell.x + cell.width - cell.width * 0.4, cell.y + cell.width); // bottom left
+    c.lineTo(cell.x + cell.width, cell.y); // bottom right
+    c.lineTo(cell.x + cell.width, cell.y - 2 * cell.width); // top right
+    c.lineTo(cell.x + cell.width - cell.width * 0.4, cell.y - cell.width); // top left
+    c.closePath();
+    c.fill();
+    c.stroke();
+
+    // STANDING TALL BOX TOP FACE
+    c.beginPath();
+    c.moveTo(cell.x - cell.width * 0.4, cell.y - cell.width); // bottom left
+    c.lineTo(cell.x + cell.width - cell.width * 0.4, cell.y - cell.width); // bottom right
+    c.lineTo(cell.x + cell.width, cell.y - 2 * cell.width); // top right
+    c.lineTo(cell.x, cell.y - 2 * cell.width); // top left
+    c.closePath();
+    c.fill();
+    c.stroke();
+}
+
+// 'cell' refers to the left cell of the two it occupies
+function draw_lying_box_siweways(c, cell) {
+    c.strokeStyle = "black";
+    c.fillStyle = "grey";
+    c.lineWidth = 4;
+
+    // LYING BOX FRONT FACE
+    c.beginPath();
+    c.moveTo(cell.x - cell.width * 0.4, cell.y + cell.width); // bottom left
+    c.lineTo(cell.x + cell.width * 2 - cell.width * 0.4, cell.y + cell.width); // bottom right
+    c.lineTo(cell.x + cell.width * 2 - cell.width * 0.4, cell.y); // top right
+    c.lineTo(cell.x - cell.width * 0.4, cell.y); // top left
+    c.closePath();
+    c.fill();
+    c.stroke();
+
+    // LYING BOX FRONT FACE
+    c.beginPath();
+    c.moveTo(cell.x + cell.width * 2 - cell.width * 0.4, cell.y + cell.width); // bottom left
+    c.lineTo(cell.x + cell.width * 2, cell.y); // bottom right
+    c.lineTo(cell.x + cell.width * 2, cell.y - cell.width); // top right
+    c.lineTo(cell.x + cell.width * 2 - cell.width * 0.4, cell.y); // top left
+    c.closePath();
+    c.fill();
+    c.stroke();
+
+    // LYING BOX FRONT FACE
+    c.beginPath();
+    c.moveTo(cell.x - cell.width * 0.4, cell.y); // bottom left
+    c.lineTo(cell.x + 2 * cell.width - cell.width * 0.4, cell.y); // bottom right
+    c.lineTo(cell.x + 2 * cell.width, cell.y - cell.width); // top right
+    c.lineTo(cell.x, cell.y - cell.width); // top left
+    c.closePath();
+    c.fill();
+    c.stroke();
+}
+
+function draw_lying_box_up(c, cell) {
+    c.strokeStyle = "black";
+    c.fillStyle = "grey";
+    c.lineWidth = 4;
+
+    // LYING UP BOX FRONT FACE
+    c.beginPath();
+    c.moveTo(cell.x - cell.width * 0.4, cell.y + cell.width); // bottom left
+    c.lineTo(cell.x + cell.width - cell.width * 0.4, cell.y + cell.width); // bottom right
+    c.lineTo(cell.x + cell.width - cell.width * 0.4, cell.y); // top right
+    c.lineTo(cell.x - cell.width * 0.4, cell.y); // top left
+    c.closePath();
+    c.fill();
+    c.stroke();
+
+    // LYING UP BOX RIGHT FACE
+    c.beginPath();
+    c.moveTo(cell.x + cell.width - cell.width * 0.4, cell.y + cell.width); // bottom left
+    c.lineTo(cell.x + cell.width + 0.4 * cell.width, cell.y - cell.width); // bottom right
+    c.lineTo(cell.x + cell.width + 0.4 * cell.width, cell.y - 2 * cell.width); // top right
+    c.lineTo(cell.x + cell.width - cell.width * 0.4, cell.y); // top left
+    c.closePath();
+    c.fill();
+    c.stroke();
+
+    // LYING UP BOX TOP FACE
+    c.beginPath();
+    c.moveTo(cell.x - cell.width * 0.4, cell.y); // bottom left
+    c.lineTo(cell.x + cell.width - cell.width * 0.4, cell.y); // bottom right
+    c.lineTo(cell.x + cell.width + 0.4 * cell.width, cell.y - 2 * cell.width); // top right
+    c.lineTo(cell.x + 0.4 * cell.width, cell.y - 2 * cell.width); // top left
+    c.closePath();
+    c.fill();
+    c.stroke();
 }

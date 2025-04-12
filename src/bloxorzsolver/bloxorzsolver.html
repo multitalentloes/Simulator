@@ -91,18 +91,23 @@
             });
         });
     </script>
-    <div id="hexagonallabyrinth_table">
-        <div id="hexagonallabyrinth_desc">
-            <h3> Labyrinth generators</h3>
-            <button class="loneTopButton" id="Kruskal"> Randomized Kruskal </button>
-            <button class="loneTopButton" id="DFS_lab"> Randomized DFS with sparsification </button>
-        </div>
-        <div id="hexagonallabyrinth_desc">
-            <h3> Labyrinth solvers</h3>
-            <button class="loneTopButton" id="BFS"> BFS </button>
-            <!-- <button class="loneTopButton" id="aStar"> A* Meet in the middle </button>  -->
-        </div>
-    </div>
+    <h3 class="description"> Bloxorz Solver</h3>
+    <p class="description">
+        This is an animation of solutions to randomly generated problem instances from a variant of
+        the flash-game Bloxorz. The goal of the game is to move a 2x1x1 box from a starting square to the target square,
+        avoiding the black ones. Additionally, this animation respects two extra constraints:
+    </p>
+    <br>
+    <ol class="description">
+        <li>Limiting the box from moving in the same direction for two consecutive steps.</li>
+        <li>Finding the least energy-expedient solution, given that it takes more energy to lift a box that lies down,
+            and less to topple a standing box over.</li>
+    </ol>
+    <br>
+    <p class="description">
+        This version of the game was given as a problem for the 2025 IDI-Open competitive programming contest under the
+        name "Crate Chucking": https://idio25.kattis.com/contests/idio25/problems/cratechucking
+    </p>
     <canvas id="canvas" width=1920 height=1080></canvas>
 </body>
 
